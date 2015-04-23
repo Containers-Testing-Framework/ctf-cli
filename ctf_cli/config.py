@@ -48,8 +48,8 @@ class CTFCliConfig(object):
         try:
             self._config.read(config_abs_path)[0]
         except IndexError:
-            logger.warning("Configuration file '%s' could not be read... "
-                           "Using ONLY default settings", config_abs_path)
+            logger.debug("Configuration file '%s' could not be read... "
+                         "Using ONLY default settings", config_abs_path)
         else:
             logger.debug("Using configuration from '%s'", config_abs_path)
 

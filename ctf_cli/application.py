@@ -43,7 +43,7 @@ class Application(object):
         """
         The main application execution method
         """
-        logger.debug("Running Containers Testing Framework cli")
+        logger.info("Running Containers Testing Framework cli")
 
         self._working_dir = BehaveWorkingDirectory(self._working_dir_path,
                                                    self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME,

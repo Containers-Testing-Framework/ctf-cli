@@ -57,4 +57,4 @@ class CliRunner(object):
         else:
             sys.exit(0)
         finally:
-            logger.info('Exiting...')
+            logger.debug('Exiting...')

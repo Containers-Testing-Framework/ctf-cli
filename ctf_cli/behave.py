@@ -42,9 +42,9 @@ class BehaveTestsConfig(object):
         try:
             self._config.read(self._config_path)[0]
         except IndexError:
-            logger.warning("Tests configuration '%s' can not be read!")
+            logger.warning("Tests configuration '%s' can not be read!", conf_path)
         else:
-            logger.debug("Using Tests configuration from '%s'.")
+            logger.debug("Using Tests configuration from '%s'.", conf_path)
 
     def __getattr__(self, name):
         """
@@ -169,13 +169,14 @@ class BehaveWorkingDirectory(object):
         """
         project_steps_dir = os.path.join(self._project_tests_dir, 'steps')
         if os.path.exists(project_steps_dir):
-            logger.info("Using project specific steps from '%s'", project_steps_dir)
+            logger.info("Using project specific Steps from '%s'", project_steps_dir.replace(self._execution_dir
+                                                                                            + os.sep, ''))
             shutil.copytree(project_steps_dir, os.path.join(self._steps_dir,
-                                                       '{0}_steps'.format(os.path.basename(
-                                                           self._execution_dir).replace('-', '_'))))
+                                                            '{0}_steps'.format(os.path.basename(
+                                                                self._execution_dir).replace('-', '_'))))
 
         else:
-            logger.warning("Not using project specific steps. '%s' does not exist!", project_steps_dir)
+            logger.warning("Not using project specific Steps. '%s' does not exist!", project_steps_dir)
 
     def _add_project_specific_features(self):
         """
@@ -186,12 +187,13 @@ class BehaveWorkingDirectory(object):
         """
         project_features_dir = os.path.join(self._project_tests_dir, 'features')
         if os.path.exists(project_features_dir):
-            logger.info("Using project specific features from '%s'", project_features_dir)
+            logger.info("Using project specific Features from '%s'", project_features_dir.replace(self._execution_dir
+                                                                                                  + os.sep, ''))
             shutil.copytree(project_features_dir, os.path.join(self._features_dir,
                                                                '{0}_features'.format(os.path.basename(
                                                                    self._execution_dir).replace('-', '_'))))
         else:
-            logger.warning("Not using project specific features. '%s' does not exist!", project_features_dir)
+            logger.warning("Not using project specific Features. '%s' does not exist!", project_features_dir)
 
     def _add_project_specific_environment_py(self):
         """
@@ -202,7 +204,8 @@ class BehaveWorkingDirectory(object):
         """
         project_environment_py = os.path.join(self._project_tests_dir, 'environment.py')
         if os.path.exists(project_environment_py):
-            logger.info("Using project specific environment.py from '%s'", project_environment_py)
+            logger.info("Using project specific environment.py from '%s'", project_environment_py.replace(
+                self._execution_dir + os.sep, ''))
             shutil.copy(project_environment_py, os.path.join(self._working_dir,
                                                              '{0}_environment.py'.format(os.path.basename(
                                                                  self._execution_dir).replace('-', '_'))))
@@ -235,9 +238,10 @@ class BehaveWorkingDirectory(object):
         for test in self._tests_conf.get_tests():
             remote_repo = self._tests_conf.get_test_steps(test)
             local_dir = os.path.join(self._steps_dir, '{0}_steps'.format(test).replace('-', '_'))
+            logger.info("Using remote Steps from '%s'", remote_repo)
             logger.debug("Cloning remote test Steps from '%s' to '%s'", remote_repo, local_dir)
             try:
-                check_call(['git', 'clone', remote_repo, local_dir])
+                check_call(['git', 'clone', '-q', remote_repo, local_dir])
             except CalledProcessError as e:
                 raise CTFCliError("Cloning of {0} failed!\n{1}".format(remote_repo, str(e)))
 
@@ -249,9 +253,10 @@ class BehaveWorkingDirectory(object):
         for test in self._tests_conf.get_tests():
             remote_repo = self._tests_conf.get_test_features(test)
             local_dir = os.path.join(self._features_dir, '{0}_features'.format(test).replace('-', '_'))
+            logger.info("Using remote Features from '%s'", remote_repo)
             logger.debug("Cloning remote test Features from '%s' to '%s'", remote_repo, local_dir)
             try:
-                check_call(['git', 'clone', remote_repo, local_dir])
+                check_call(['git', 'clone', '-q', remote_repo, local_dir])
             except CalledProcessError as e:
                 raise CTFCliError("Cloning of {0} failed!\n{1}".format(remote_repo, str(e)))
 
@@ -370,6 +375,6 @@ class BehaveRunner(object):
                                                             CTFCliConfig.CONFIG_IMAGE))
         ]
 
-        logger.debug("Running behave: %s", str(command))
+        logger.info("Running behave inside working directory '%s'", ' '.join(command))
 
         return call(command, cwd=self._working_dir_obj.path())
