@@ -351,9 +351,9 @@ class BehaveRunner(object):
         """
         command = [
             'behave',
-            '-D DOCKERFILE={0}'.format(self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME,
+            '-D', 'DOCKERFILE={0}'.format(self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME,
                                                               CTFCliConfig.CONFIG_DOCKERFILE)),
-            '-D IMAGE={0}'.format(self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME,
+            '-D', 'IMAGE={0}'.format(self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME,
                                                          CTFCliConfig.CONFIG_IMAGE))
         ]
 
