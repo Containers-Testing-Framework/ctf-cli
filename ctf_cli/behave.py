@@ -367,13 +367,18 @@ class BehaveRunner(object):
         Run Behave and pass some runtime arguments
         :return:
         """
+        image = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_IMAGE)
+        dockerfile = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE)
+
         command = [
             'behave',
-            '-D', 'DOCKERFILE={0}'.format(self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME,
-                                                                 CTFCliConfig.CONFIG_DOCKERFILE)),
-            '-D', 'IMAGE={0}'.format(self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME,
-                                                            CTFCliConfig.CONFIG_IMAGE))
+            '-D', 'DOCKERFILE={0}'.format(dockerfile),
         ]
+
+        if image:
+            command.append(['-D', 'IMAGE={0}'.format(image)])
+        else:
+            command.append(['-D', 'IMAGE'])
 
         logger.info("Running behave inside working directory '%s'", ' '.join(command))
 
