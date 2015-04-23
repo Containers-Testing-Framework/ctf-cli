@@ -19,6 +19,7 @@
 from ctf_cli.logger import logger
 from ctf_cli.config import CTFCliConfig
 from ctf_cli.behave import BehaveWorkingDirectory, BehaveRunner
+from ctf_cli.exceptions import CTFCliError
 
 import os
 
@@ -53,7 +54,14 @@ class Application(object):
         # Prepare the steps.py in the Steps dir that combines all the other
         self._working_dir.setup()
 
-        # TODO: look for dockerfile if not passed
+        # If no Dockerfile passed on the cli, try to use one from the execution directory
+        if not self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE):
+            local_file = os.path.join(self._execution_dir_path, 'Dockerfile')
+            if not os.path.isfile(local_file):
+                raise CTFCliError("No Dockerfile passed on the cli and no Dockerfile "
+                                  "is present in the current directory!")
+            logger.debug("Using Dockerfile from the current directory.")
+            self._cli_conf.set(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE, local_file)
 
         # Execute Behave
         self._behave_runner = BehaveRunner(self._working_dir, self._cli_conf)
