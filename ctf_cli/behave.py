@@ -25,6 +25,7 @@ from six.moves.configparser import ConfigParser
 from ctf_cli.logger import logger
 from ctf_cli.exceptions import CTFCliError
 from ctf_cli.config import CTFCliConfig
+from ctf_cli.common_environment import common_environment_py_content
 
 
 class BehaveTestsConfig(object):
@@ -195,24 +196,36 @@ class BehaveWorkingDirectory(object):
     def _add_project_specific_environment_py(self):
         """
         Adds project specific environment.py from execution_dir/test/ into the
-        working directory
+        working directory. It is renamed and included in the common environment.py
 
         :return:
         """
         project_environment_py = os.path.join(self._project_tests_dir, 'environment.py')
         if os.path.exists(project_environment_py):
             logger.info("Using project specific environment.py from '%s'", project_environment_py)
-            shutil.copy(project_environment_py, self._working_dir)
+            shutil.copy(project_environment_py, os.path.join(self._working_dir,
+                                                             '{0}_environment.py'.format(os.path.basename(
+                                                                 self._execution_dir).replace('-', '_'))))
         else:
             logger.warning("Not using project specific environment.py. '%s' does not exist!", project_environment_py)
 
     def _write_environment_py(self):
         """
+        Writes common environment.py inside working_dir/. The file will import
+        the copied project specific environment file if present.
 
         :return:
         """
-        # TODO: Implement!!!
-        pass
+        project_env_py = glob.glob(os.path.join(self._working_dir, '*environment.py'))
+        if project_env_py:
+            import_statement = 'from {0} import *'.format(os.path.basename(project_env_py[0]).replace('.py', ''))
+        else:
+            import_statement = ''
+
+        # create the environment.py
+        with open(os.path.join(self._working_dir, 'environment.py'), 'w') as f:
+            logger.debug("Writing '%s'", os.path.join(self._working_dir, 'environment.py'))
+            f.write(common_environment_py_content.format(project_env_py_import=import_statement))
 
     def _add_remote_steps(self):
         """
