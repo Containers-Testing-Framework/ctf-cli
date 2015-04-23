@@ -109,6 +109,7 @@ class BehaveWorkingDirectory(object):
         self._setup_dir_structure()
         self._add_project_specific_features()
         self._add_project_specific_steps()
+        self._add_project_specific_environment_py()
         if self._tests_conf:
             self._add_remote_features()
             self._add_remote_steps()
@@ -189,6 +190,20 @@ class BehaveWorkingDirectory(object):
                                                               self._execution_dir).replace('-', '_'))))
         else:
             logger.warning("Not using project specific features. '%s' does not exist!", project_features_dir)
+
+    def _add_project_specific_environment_py(self):
+        """
+        Adds project specific environment.py from execution_dir/test/ into the
+        working directory
+
+        :return:
+        """
+        project_environment_py = os.path.join(self._project_tests_dir, 'environment.py')
+        if os.path.exists(project_environment_py):
+            logger.info("Using project specific environment.py from '%s'", project_environment_py)
+            shutil.copy(project_environment_py, self._working_dir)
+        else:
+            logger.warning("Not using project specific environment.py. '%s' does not exist!", project_environment_py)
 
     def _add_remote_steps(self):
         """
