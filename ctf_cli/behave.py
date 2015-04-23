@@ -187,8 +187,8 @@ class BehaveWorkingDirectory(object):
         if os.path.exists(project_features_dir):
             logger.info("Using project specific features from '%s'", project_features_dir)
             shutil.copytree(project_features_dir, os.path.join(self._features_dir,
-                                                          '{0}_features'.format(os.path.basename(
-                                                              self._execution_dir).replace('-', '_'))))
+                                                               '{0}_features'.format(os.path.basename(
+                                                                   self._execution_dir).replace('-', '_'))))
         else:
             logger.warning("Not using project specific features. '%s' does not exist!", project_features_dir)
 
@@ -352,9 +352,9 @@ class BehaveRunner(object):
         command = [
             'behave',
             '-D', 'DOCKERFILE={0}'.format(self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME,
-                                                              CTFCliConfig.CONFIG_DOCKERFILE)),
+                                                                 CTFCliConfig.CONFIG_DOCKERFILE)),
             '-D', 'IMAGE={0}'.format(self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME,
-                                                         CTFCliConfig.CONFIG_IMAGE))
+                                                            CTFCliConfig.CONFIG_IMAGE))
         ]
 
         logger.debug("Running behave: %s", str(command))
