@@ -114,6 +114,7 @@ class BehaveWorkingDirectory(object):
             self._add_remote_features()
             self._add_remote_steps()
         self._combine_steps()
+        self._write_environment_py()
 
     @staticmethod
     def find_tests_config(tests_path):
@@ -204,6 +205,14 @@ class BehaveWorkingDirectory(object):
             shutil.copy(project_environment_py, self._working_dir)
         else:
             logger.warning("Not using project specific environment.py. '%s' does not exist!", project_environment_py)
+
+    def _write_environment_py(self):
+        """
+
+        :return:
+        """
+        # TODO: Implement!!!
+        pass
 
     def _add_remote_steps(self):
         """
