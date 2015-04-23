@@ -197,7 +197,7 @@ class BehaveWorkingDirectory(object):
         """
         for test in self._tests_conf.get_tests():
             remote_repo = self._tests_conf.get_test_steps(test)
-            local_dir = os.path.join(self._steps_dir, '{0}_steps'.format(test)).replace('-', '_')
+            local_dir = os.path.join(self._steps_dir, '{0}_steps'.format(test).replace('-', '_'))
             logger.debug("Cloning remote test Steps from '%s' to '%s'", remote_repo, local_dir)
             try:
                 check_call(['git', 'clone', remote_repo, local_dir])
@@ -211,7 +211,7 @@ class BehaveWorkingDirectory(object):
         """
         for test in self._tests_conf.get_tests():
             remote_repo = self._tests_conf.get_test_features(test)
-            local_dir = os.path.join(self._features_dir, '{0}_features'.format(test)).replace('-', '_')
+            local_dir = os.path.join(self._features_dir, '{0}_features'.format(test).replace('-', '_'))
             logger.debug("Cloning remote test Features from '%s' to '%s'", remote_repo, local_dir)
             try:
                 check_call(['git', 'clone', remote_repo, local_dir])
