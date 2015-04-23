@@ -167,7 +167,7 @@ class BehaveWorkingDirectory(object):
         project_steps_dir = os.path.join(self._project_tests_dir, 'steps')
         if os.path.exists(project_steps_dir):
             logger.info("Using project specific steps from '%s'", project_steps_dir)
-            os.symlink(project_steps_dir, os.path.join(self._steps_dir,
+            shutil.copytree(project_steps_dir, os.path.join(self._steps_dir,
                                                        '{0}_steps'.format(os.path.basename(
                                                            self._execution_dir).replace('-', '_'))))
 
@@ -184,7 +184,7 @@ class BehaveWorkingDirectory(object):
         project_features_dir = os.path.join(self._project_tests_dir, 'features')
         if os.path.exists(project_features_dir):
             logger.info("Using project specific features from '%s'", project_features_dir)
-            os.symlink(project_features_dir, os.path.join(self._features_dir,
+            shutil.copytree(project_features_dir, os.path.join(self._features_dir,
                                                           '{0}_features'.format(os.path.basename(
                                                               self._execution_dir).replace('-', '_'))))
         else:
