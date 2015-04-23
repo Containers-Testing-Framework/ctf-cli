@@ -18,8 +18,6 @@
 
 import argparse
 
-from ctf_cli import settings
-
 
 class ArgumentsParser(object):
     """ Class for processing data from commandline """
@@ -41,9 +39,9 @@ class ArgumentsParser(object):
         self.parser.add_argument(
             "-c",
             "--cli-config",
-            default=settings.DEFAULT_CONFIG_LOCATION,
+            default=None,
             dest='cli_config_path',
-            help="Path to CLI configuration file (default: '{0}')".format(settings.DEFAULT_CONFIG_LOCATION)
+            help="Path to CLI configuration file (By default use only CLI arguments and default values)"
         )
         self.parser.add_argument(
             "-t",

@@ -30,14 +30,24 @@ class Application(object):
         """
         The Application implementation.
         """
-        self._cli_conf = CTFCliConfig(cli_args)
-        self._dockerfile = None
-        self._image = None
         self._execution_dir_path = os.getcwd()
         self._working_dir_path = os.path.join(self._execution_dir_path,
                                               '{0}-behave-working-dir'.format(os.path.basename(self._execution_dir_path)))
         self._working_dir = None
         self._behave_runner = None
+
+        if not self._cli_args.cli_config_path:
+            self._cli_args.cli_config_path = CTFCliConfig.find_cli_config(self._execution_dir_path)
+        self._cli_conf = CTFCliConfig(cli_args)
+
+        # If no Dockerfile passed on the cli, try to use one from the execution directory
+        if not self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE):
+            local_file = os.path.join(self._execution_dir_path, 'Dockerfile')
+            if not os.path.isfile(local_file):
+                raise CTFCliError("No Dockerfile passed on the cli and no Dockerfile "
+                                  "is present in the current directory!")
+            logger.debug("Using Dockerfile from the current directory.")
+            self._cli_conf.set(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE, local_file)
 
     def run(self):
         """
@@ -53,15 +63,6 @@ class Application(object):
         # Add the project specific Features and steps
         # Prepare the steps.py in the Steps dir that combines all the other
         self._working_dir.setup()
-
-        # If no Dockerfile passed on the cli, try to use one from the execution directory
-        if not self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE):
-            local_file = os.path.join(self._execution_dir_path, 'Dockerfile')
-            if not os.path.isfile(local_file):
-                raise CTFCliError("No Dockerfile passed on the cli and no Dockerfile "
-                                  "is present in the current directory!")
-            logger.debug("Using Dockerfile from the current directory.")
-            self._cli_conf.set(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE, local_file)
 
         # Execute Behave
         self._behave_runner = BehaveRunner(self._working_dir, self._cli_conf)

@@ -23,6 +23,7 @@ import six
 from six.moves.configparser import ConfigParser
 
 from ctf_cli.logger import logger
+from ctf_cli.settings import DEFAULT_CONFIG_NAME
 
 
 class CTFCliConfig(object):
@@ -30,28 +31,55 @@ class CTFCliConfig(object):
     Configuration parser for CTF CLI
     """
 
-    GLOBAL_SECTION_NAME = 'ctf_cli'
+    GLOBAL_SECTION_NAME = 'ctf'
     CONFIG_VERBOSE = 'Verbose'
     CONFIG_CLI_CONFIG_PATH = 'CLIConfigPath'
     CONFIG_TESTS_CONFIG_PATH = 'TestsConfigPath'
     CONFIG_DOCKERFILE = 'Dockerfile'
     CONFIG_IMAGE = 'Image'
+    CONFIG_EXEC_TYPE = 'ExecType'
+
+    ANSIBLE_SECTION_NAME = 'ansible'
+    CONFIG_ANSIBLE_HOST = 'Host'
+    CONFIG_ANSIBLE_METHOD = 'Method'
+    CONFIG_ANSIBLE_USER = 'User'
 
     def __init__(self, cli_conf):
         self._config = ConfigParser()
         self._add_commandline_arguments(cli_conf)
 
+        if cli_conf.cli_config_path:
+            config_abs_path = os.path.abspath(cli_conf.cli_config_path)
+            try:
+                self._config.read(config_abs_path)[0]
+            except IndexError:
+                logger.warning("Configuration file '%s' could not be read... "
+                               "Using ONLY default settings", config_abs_path)
+            else:
+                logger.debug("Using configuration from '%s'", config_abs_path)
 
+    @staticmethod
+    def find_cli_config(execution_dir=None):
+        """
+        Look for ctf.conf file in this order:
+        1. execution directory
+        2. ~/ctf.conf
+        3. ~/.ctf/ctf.conf
+        4. /etc/ctf.conf
 
-        config_abs_path = os.path.abspath(cli_conf.cli_config_path)
-
-        try:
-            self._config.read(config_abs_path)[0]
-        except IndexError:
-            logger.debug("Configuration file '%s' could not be read... "
-                         "Using ONLY default settings", config_abs_path)
+        :param execution_dir: path to dir in which CTF framework was executed
+        :return: path to the config file or None if not found
+        """
+        if execution_dir and os.path.isfile(os.path.join(execution_dir, DEFAULT_CONFIG_NAME)):
+            return os.path.isfile(os.path.join(execution_dir, DEFAULT_CONFIG_NAME))
+        elif os.path.isfile(os.path.expanduser(os.path.join('~', DEFAULT_CONFIG_NAME))):
+            return os.path.expanduser(os.path.join('~', DEFAULT_CONFIG_NAME))
+        elif os.path.isfile(os.path.expanduser(os.path.join('~/.ctf', DEFAULT_CONFIG_NAME))):
+            return os.path.expanduser(os.path.join('~/.ctf', DEFAULT_CONFIG_NAME))
+        elif os.path.isfile(os.path.join('/etc', DEFAULT_CONFIG_NAME)):
+            return os.path.join('/etc', DEFAULT_CONFIG_NAME)
         else:
-            logger.debug("Using configuration from '%s'", config_abs_path)
+            return None
 
     def _add_commandline_arguments(self, cli_conf):
         """
@@ -62,7 +90,7 @@ class CTFCliConfig(object):
         """
         cli_settings = {self.GLOBAL_SECTION_NAME: {
             self.CONFIG_VERBOSE: 'yes' if cli_conf.verbose else 'no',
-            self.CONFIG_CLI_CONFIG_PATH: os.path.abspath(cli_conf.cli_config_path),
+            self.CONFIG_CLI_CONFIG_PATH: os.path.abspath(cli_conf.cli_config_path) if cli_conf.cli_config_path else '',
             self.CONFIG_TESTS_CONFIG_PATH: os.path.abspath(
                 cli_conf.tests_config_path)if cli_conf.tests_config_path else None,
             self.CONFIG_DOCKERFILE: os.path.abspath(

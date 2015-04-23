@@ -16,5 +16,5 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-DEFAULT_CONFIG_LOCATION = '/etc/ctf-cli.conf'
-DEBUG_LOG_FILE_NAME = 'ctf-cli-debug.log'
+DEFAULT_CONFIG_NAME = 'ctf.conf'
+DEBUG_LOG_FILE_NAME = 'ctf-debug.log'
