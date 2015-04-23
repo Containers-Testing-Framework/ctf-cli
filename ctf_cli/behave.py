@@ -265,7 +265,7 @@ class BehaveWorkingDirectory(object):
         return imports
 
     @staticmethod
-    def check_and_add_init_py(path, skip_root=True):
+    def check_and_add_init_py(path, skip_root=False):
         """
         Checks if __init__.py is in all subdirs under the given path
 
