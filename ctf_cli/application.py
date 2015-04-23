@@ -55,9 +55,8 @@ class Application(object):
         """
         logger.info("Running Containers Testing Framework cli")
 
-        self._working_dir = BehaveWorkingDirectory(self._working_dir_path,
-                                                   self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME,
-                                                                      CTFCliConfig.CONFIG_TESTS_CONFIG_PATH))
+        self._working_dir = BehaveWorkingDirectory(self._working_dir_path, self._cli_conf)
+
         # Setup Behave structure inside working directory
         # Clone common Features and steps into the working dir
         # Add the project specific Features and steps
