@@ -40,10 +40,31 @@ class ArgumentsParser(object):
         )
         self.parser.add_argument(
             "-c",
-            "--config",
+            "--cli-config",
             default=settings.DEFAULT_CONFIG_LOCATION,
-            dest='config_path',
-            help="Path to configuration file (default: '{0}')".format(settings.DEFAULT_CONFIG_LOCATION)
+            dest='cli_config_path',
+            help="Path to CLI configuration file (default: '{0}')".format(settings.DEFAULT_CONFIG_LOCATION)
+        )
+        self.parser.add_argument(
+            "-t",
+            "--tests-config",
+            default=None,
+            dest='tests_config_path',
+            help="Path to tests configuration file. By default it will be searched for in test/ dir"
+        )
+        self.parser.add_argument(
+            "-f",
+            "--dockerfile",
+            default=None,
+            dest='dockerfile',
+            help="Path to Dockerfile to use. If not passed, will be searched for in the current directory"
+        )
+        self.parser.add_argument(
+            "-i",
+            "--image",
+            default=None,
+            dest='image',
+            help="Image to use for testing. If not passed, the image will be built from the Dockerfile."
         )
 
     def __getattr__(self, name):

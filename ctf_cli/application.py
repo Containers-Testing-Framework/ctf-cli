@@ -17,7 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from ctf_cli.logger import logger
-from ctf_cli.config import CTFCliConfiguration
+from ctf_cli.config import CTFCliConfig
+from ctf_cli.behave import BehaveWorkingDirectory, BehaveRunner
+
+import os
 
 
 class Application(object):
@@ -26,12 +29,32 @@ class Application(object):
         """
         The Application implementation.
         """
-        self.configuration = CTFCliConfiguration(cli_args)
-
+        self._cli_conf = CTFCliConfig(cli_args)
+        self._dockerfile = None
+        self._image = None
+        self._execution_dir_path = os.getcwd()
+        self._working_dir_path = os.path.join(self._execution_dir_path,
+                                              '{0}-behave-working-dir'.format(os.path.basename(self._execution_dir_path)))
+        self._working_dir = None
+        self._behave_runner = None
 
     def run(self):
         """
         The main application execution method
         """
-        logger.debug("Containers Testing Framework cli")
-        # TODO: add logic
+        logger.debug("Running Containers Testing Framework cli")
+
+        self._working_dir = BehaveWorkingDirectory(self._working_dir_path,
+                                                   self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME,
+                                                                      CTFCliConfig.CONFIG_TESTS_CONFIG_PATH))
+        # Setup Behave structure inside working directory
+        # Clone common Features and steps into the working dir
+        # Add the project specific Features and steps
+        # Prepare the steps.py in the Steps dir that combines all the other
+        self._working_dir.setup()
+
+        # TODO: look for dockerfile if not passed
+
+        # Execute Behave
+        self._behave_runner = BehaveRunner(self._working_dir, self._cli_conf)
+        return self._behave_runner.run()
