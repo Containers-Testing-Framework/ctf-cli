@@ -1,0 +1,4 @@
+[common-tests]
+Steps=https://github.com/Containers-Testing-Framework/common-steps.git
+Features=https://github.com/Containers-Testing-Framework/common-features.git
+
