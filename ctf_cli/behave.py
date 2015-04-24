@@ -20,7 +20,8 @@ import os
 import shutil
 import glob
 from subprocess import check_call, call, CalledProcessError
-from six.moves.configparser import ConfigParser
+
+from six.moves.configparser import ConfigParser, NoSectionError, NoOptionError
 
 from ctf_cli.logger import logger
 from ctf_cli.exceptions import CTFCliError
@@ -76,6 +77,7 @@ class BehaveWorkingDirectory(object):
         self._working_dir = working_dir
         self._cli_conf = cli_conf
         self._execution_dir = os.path.dirname(self._working_dir)
+        self._exec_type_conf_path = None
 
         if os.path.isdir(os.path.join(self._execution_dir, 'test')):
             self._project_tests_dir = os.path.join(self._execution_dir, 'test')
@@ -108,6 +110,9 @@ class BehaveWorkingDirectory(object):
     def path(self):
         return self._working_dir
 
+    def exec_type_conf_path(self):
+        return self._exec_type_conf_path
+
     def setup(self):
         """
         Setup the working directory
@@ -116,6 +121,10 @@ class BehaveWorkingDirectory(object):
         """
         self._check_working_dir()
         self._setup_dir_structure()
+
+        if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) == 'ansible':
+            self._create_ansible_config()
+
         self._add_project_specific_features()
         self._add_project_specific_steps()
         self._add_project_specific_environment_py()
@@ -146,6 +155,32 @@ class BehaveWorkingDirectory(object):
         else:
             logger.debug("Found configuration file: %s", str(f))
             return os.path.join(tests_path, f[0])
+
+    def _create_ansible_config(self):
+        """
+        Create ansible configuration file
+
+        :return: None
+        """
+        try:
+            method = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_METHOD)
+            host = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_HOST)
+            user = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_USER)
+        except NoSectionError as e:
+            raise CTFCliError("No configuration for 'ansible' provided!")
+        except NoOptionError as e:
+            raise CTFCliError("Wrong ansible configuration: {0}".format(str(e)))
+
+        ansible_conf_path = os.path.join(self._working_dir, 'ansible.conf')
+        ansible_conf_content = "[ctf]\n{host} ansible_connection={method} ansible_ssh_user={user}\n".format(
+            host=host, method=method, user=user
+        )
+
+        logger.debug("Writing ansible configuration to '%s'\n%s", ansible_conf_path, ansible_conf_content)
+        with open(ansible_conf_path, 'w') as f:
+            f.write(ansible_conf_content)
+
+        self._exec_type_conf_path = ansible_conf_path
 
     def _check_working_dir(self):
         """
@@ -379,6 +414,12 @@ class BehaveRunner(object):
         image = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_IMAGE)
         dockerfile = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE)
 
+        # configuration file for ansible
+        if self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) == 'ansible':
+            ansible_conf = self._working_dir_obj.exec_type_conf_path()
+        else:
+            ansible_conf = None
+
         command = [
             'behave',
             '-D', 'DOCKERFILE={0}'.format(dockerfile),
@@ -387,6 +428,8 @@ class BehaveRunner(object):
         if image:
             command.extend(['-D', 'IMAGE={0}'.format(image)])
 
-        logger.info("Running behave inside working directory '%s'", ' '.join(command))
+        if ansible_conf:
+            command.extend(['-D', 'ANSIBLE={0}'.format(ansible_conf)])
 
+        logger.info("Running behave inside working directory '%s'", ' '.join(command))
         return call(command, cwd=self._working_dir_obj.path())

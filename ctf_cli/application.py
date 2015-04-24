@@ -49,6 +49,10 @@ class Application(object):
             logger.debug("Using Dockerfile from the current directory.")
             self._cli_conf.set(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE, local_file)
 
+        # TODO: Remove this or rework, once more types are implemented
+        if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) != 'ansible':
+            raise CTFCliError("Wrong ExecType configured. Currently only 'ansible' is supported!")
+
     def run(self):
         """
         The main application execution method

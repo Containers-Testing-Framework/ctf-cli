@@ -95,7 +95,8 @@ class CTFCliConfig(object):
                 cli_conf.tests_config_path)if cli_conf.tests_config_path else None,
             self.CONFIG_DOCKERFILE: os.path.abspath(
                 cli_conf.dockerfile) if cli_conf.dockerfile else None,
-            self.CONFIG_IMAGE: cli_conf.image
+            self.CONFIG_IMAGE: cli_conf.image,
+            self.CONFIG_EXEC_TYPE: 'ansible',
         }}
 
         self.config_parser_read_dict(self._config, cli_settings)
