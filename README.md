@@ -51,12 +51,27 @@ The `tests.conf` file contains configuration telling the CTF what extra remote t
 You can implement some of the methods that are typically used with Behave inside this file. It will be combined with the CTF common `environment.py` file. This integration may not be perfect yet, feel free to test and provide feedback.
 
 ## CLI tool
-The key part of the framework is the CLI tool called `ctf-cli`. It gathers information, reads configurations, sets up the environment for Behave and runs it.
+The key part of the framework is the CLI tool called `ctf-cli`. It gathers information, reads configurations, sets up the environment for Behave and runs it. Currently `ctf-cli` tool supports only ansible for running commands on some host. To run your tests make sure you included configuration for ansible in the `ctf-cli` configuration.
 
 ### Requirements
 * git
 * behave >= 1.2.5
 * ansible
+
+### Configuration file
+You can pass the path to the configuration file on the command line using the `-c` or `--cli-config` option. If not provided the tool tries to find the configuration in this order of preference:
+
+1. `ctf.conf` in the current directory
+2. `ctf.conf` in the user home directory `~/ctf.conf`
+3. `ctf.conf` in the `ctf` direcotory inside user home directory `~/ctf/ctf.conf`
+4. `ctf.conf` in the system configuration directory `/etc/ctf.conf`
+
+The configuration must include configuration for ansible. The setup on the host you want to use needs to be done manually before running the `ctf-cli` (e.g. setting up ssh keys, etc.) An example of the configuration for ansible inside the `ctf.conf` can look like this:
+
+    [ansible]
+    Host=127.0.0.1
+    User=root
+    Method=ssh
 
 ### Usage
 The `ctf-cli` should be executed inside the directory of the project, containing the Dockerfile. There are couple of options one can pass to the CLI tool:
