@@ -36,8 +36,8 @@ class Application(object):
         self._working_dir = None
         self._behave_runner = None
 
-        if not self._cli_args.cli_config_path:
-            self._cli_args.cli_config_path = CTFCliConfig.find_cli_config(self._execution_dir_path)
+        if not cli_args.cli_config_path:
+            cli_args.cli_config_path = CTFCliConfig.find_cli_config(self._execution_dir_path)
         self._cli_conf = CTFCliConfig(cli_args)
 
         # If no Dockerfile passed on the cli, try to use one from the execution directory
