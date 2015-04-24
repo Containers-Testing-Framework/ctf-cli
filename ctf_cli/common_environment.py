@@ -61,7 +61,7 @@ def before_all(context):
     def run(command):
         logging.debug("Running '%s'" % command)
         context.result = ansible.runner.Runner(
-            module_name='command',
+            module_name='shell',
             inventory=inventory,
             module_args="{0} chdir={1}".format(command, remote_dir)
         ).run()
@@ -78,6 +78,7 @@ def before_all(context):
             if values['rc'] != 0:
                 print("On {0} returned {1}".format(host, values['rc']))
                 print("stderr: {0}".format(values['stderr']))
+                print("cmd: {0}".format(values['cmd']))
                 assert False
             return values['stdout']
     context.run = run
@@ -122,11 +123,17 @@ def before_all(context):
 
 
 def before_scenario(context, scenario):
-    if hasattr(context, 'cid'):
-        context.run("docker stop %s" % context.cid)
-        context.run("docker kill %s" % context.cid)
-        context.run("docker rm %s" % context.cid)
-        del context.cid
+    try:
+        cid = context.run('cat %s' % context.cid_file)
+    except AssertionError, e:
+        logging.debug("before_scenario: {0}".format(e))
+        return
+    if cid:
+        context.run("docker stop %s" % cid)
+        context.run("docker kill %s" % cid)
+        context.run("docker rm %s" % cid)
+        if hasattr(context, 'cid'):
+            del context.cid
         context.run('rm {0}'.format(context.cid_file))
 
 
