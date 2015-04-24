@@ -71,7 +71,7 @@ class CTFCliConfig(object):
         :return: path to the config file or None if not found
         """
         if execution_dir and os.path.isfile(os.path.join(execution_dir, DEFAULT_CONFIG_NAME)):
-            return os.path.isfile(os.path.join(execution_dir, DEFAULT_CONFIG_NAME))
+            return os.path.join(execution_dir, DEFAULT_CONFIG_NAME)
         elif os.path.isfile(os.path.expanduser(os.path.join('~', DEFAULT_CONFIG_NAME))):
             return os.path.expanduser(os.path.join('~', DEFAULT_CONFIG_NAME))
         elif os.path.isfile(os.path.expanduser(os.path.join('~/.ctf', DEFAULT_CONFIG_NAME))):
