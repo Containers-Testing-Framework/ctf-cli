@@ -166,14 +166,15 @@ class BehaveWorkingDirectory(object):
             method = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_METHOD)
             host = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_HOST)
             user = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_USER)
+            sudo = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_SUDO)
         except NoSectionError as e:
             raise CTFCliError("No configuration for 'ansible' provided!")
         except NoOptionError as e:
             raise CTFCliError("Wrong ansible configuration: {0}".format(str(e)))
 
         ansible_conf_path = os.path.join(self._working_dir, 'ansible.conf')
-        ansible_conf_content = "[ctf]\n{host} ansible_connection={method} ansible_ssh_user={user}\n".format(
-            host=host, method=method, user=user
+        ansible_conf_content = "[ctf]\n{host} ansible_connection={method} ansible_ssh_user={user} ansible_sudo={sudo}\n".format(
+            host=host, method=method, user=user, sudo=sudo
         )
 
         logger.debug("Writing ansible configuration to '%s'\n%s", ansible_conf_path, ansible_conf_content)
