@@ -385,7 +385,7 @@ class BehaveRunner(object):
         ]
 
         if image:
-            command.append(['-D', 'IMAGE={0}'.format(image)])
+            command.extend(['-D', 'IMAGE={0}'.format(image)])
 
         logger.info("Running behave inside working directory '%s'", ' '.join(command))
 
