@@ -30,6 +30,13 @@ class ArgumentsParser(object):
 
     def add_args(self):
         self.parser.add_argument(
+            dest='cli_action',
+            choices=['init', 'run', 'update'],
+            default=['init', 'run'],
+            nargs='?',
+            help="Action to perform (default - init and run)"
+        )
+        self.parser.add_argument(
             "-v",
             "--verbose",
             default=False,

@@ -48,7 +48,12 @@ class CliRunner(object):
                                                 logging.INFO)
 
             app = Application(args)
-            app.run()
+            if 'init' in args.cli_action:
+                app.init()
+            if 'run' in args.cli_action:
+                app.run()
+            if 'update' in args.cli_action:
+                app.update()
         except KeyboardInterrupt:
             logger.info('Interrupted by user')
         except CTFCliError as e:

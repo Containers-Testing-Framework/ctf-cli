@@ -40,6 +40,19 @@ class Application(object):
             cli_args.cli_config_path = CTFCliConfig.find_cli_config(self._execution_dir_path)
         self._cli_conf = CTFCliConfig(cli_args)
 
+    def init(self):
+        """
+        Initialize default app test structure
+        """
+        logger.info("Initialize default directory structure")
+        pass
+
+    def run(self):
+        """
+        The main application execution method
+        """
+        logger.info("Running Containers Testing Framework cli")
+
         # If no Dockerfile passed on the cli, try to use one from the execution directory
         if not self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE):
             local_file = os.path.join(self._execution_dir_path, 'Dockerfile')
@@ -53,12 +66,6 @@ class Application(object):
         if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) != 'ansible':
             raise CTFCliError("Wrong ExecType configured. Currently only 'ansible' is supported!")
 
-    def run(self):
-        """
-        The main application execution method
-        """
-        logger.info("Running Containers Testing Framework cli")
-
         self._working_dir = BehaveWorkingDirectory(self._working_dir_path, self._cli_conf)
 
         # Setup Behave structure inside working directory
@@ -70,3 +77,9 @@ class Application(object):
         # Execute Behave
         self._behave_runner = BehaveRunner(self._working_dir, self._cli_conf)
         return self._behave_runner.run()
+
+    def update(self):
+        """
+        Update app submodules
+        """
+        pass
