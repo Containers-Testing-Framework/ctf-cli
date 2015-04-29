@@ -23,7 +23,7 @@ from ctf_cli.exceptions import CTFCliError
 from ctf_cli.common_environment import common_environment_py_content, sample_ctl_ctf_config
 
 import os
-import shutil
+from subprocess import call
 
 
 class Application(object):
@@ -101,11 +101,11 @@ class Application(object):
         # Add common-features and common-steps as submodules
 
         # TODO:  make this generic when a different type of container is specified
-        common_features_dir = os.path.join(features_dir, "common-docker")
+        common_features_dir = os.path.join(features_dir, "common-features")
         if os.path.exists(common_features_dir):
-            logger.info("Directory tests/features/common-docker already exists")
+            logger.info("Directory tests/features/common-features already exists")
         else:
-            logger.info("Adding tests/features/common-docker as a submodule")
+            logger.info("Adding tests/features/common-features as a submodule")
             os.system('git submodule add https://github.com/Containers-Testing-Framework/common-features.git tests/features/common-features')
 
         common_steps_dir = os.path.join(steps_dir, "common_steps")
@@ -161,4 +161,15 @@ class Application(object):
         """
         Update app submodules
         """
-        pass
+        logger.info("Updating Containers Testing Framework common steps and features")
+
+        common_steps_dir = os.path.join(self._execution_dir_path, "tests", "steps", "common_steps")
+        common_features_dir = os.path.join(self._execution_dir_path, "tests", "features", "common-features")
+        for directory in [common_steps_dir, common_features_dir]:
+            logger.info("Updating %s" % directory)
+            call("git fetch origin", shell=True, cwd=directory)
+            call("git checkout origin/master", shell=True, cwd=directory)
+
+        # Check that steps are not contradicting with each other
+        logger.info("Checking project steps sanity")
+        call("behave tests -d", shell=True)
