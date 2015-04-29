@@ -20,8 +20,10 @@ from ctf_cli.logger import logger
 from ctf_cli.config import CTFCliConfig
 from ctf_cli.behave import BehaveWorkingDirectory, BehaveRunner
 from ctf_cli.exceptions import CTFCliError
+from ctf_cli.common_environment import common_environment_py_content, sample_ctl_ctf_config
 
 import os
+import shutil
 
 
 class Application(object):
@@ -45,7 +47,84 @@ class Application(object):
         Initialize default app test structure
         """
         logger.info("Initialize default directory structure")
-        pass
+
+        # Make sure we're in a directory under git control
+        if not os.path.isdir(".git") or \
+           os.system('git rev-parse 2> /dev/null > /dev/null') != 0:
+            logger.info("Directory is not under git control, running git init")
+            os.system("git init")
+
+        # Create test dir if it is missing
+        tests_dir = os.path.join(self._execution_dir_path, "tests")
+        if os.path.exists(tests_dir):
+            logger.info("Directory tests already exists")
+        else:
+            logger.info("Creating tests directory")
+            os.mkdir(tests_dir)
+            os.system("git add %s" % tests_dir)
+
+        env_py_path = os.path.join(tests_dir, "environment.py")
+        if os.path.exists(env_py_path):
+            logger.info("File tests/environment.py already exists")
+        else:
+            logger.info("Creating environment.py")
+            # Create environment.py
+            with open(env_py_path, "w") as f:
+                f.write(common_environment_py_content)
+            os.system("git add %s" % env_py_path)
+
+        features_dir = os.path.join(tests_dir, "features")
+        if os.path.exists(features_dir):
+            logger.info("Directory tests/features already exists")
+        else:
+            logger.info("Creating tests/features directory")
+            os.mkdir(features_dir)
+            os.system("git add %s" % features_dir)
+
+        steps_dir = os.path.join(tests_dir, "steps")
+        if os.path.exists(steps_dir):
+            logger.info("Directory tests/steps already exists")
+        else:
+            logger.info("Creating tests/steps directory")
+            os.mkdir(steps_dir)
+            os.system("git add %s" % steps_dir)
+
+        # TODO: check that this file is actually necessary
+        steps_init_file = os.path.join(steps_dir, "__init__.py")
+        if os.path.exists(steps_init_file):
+            logger.info("File tests/steps/__init__.py already exists")
+        else:
+            logger.info("Creating tests/steps/__init__.py file")
+            open(steps_init_file, "a").close()
+            os.system("git add %s" % steps_init_file)
+
+        # Add common-features and common-steps as submodules
+
+        # TODO:  make this generic when a different type of container is specified
+        common_features_dir = os.path.join(features_dir, "common-docker")
+        if os.path.exists(common_features_dir):
+            logger.info("Directory tests/features/common-docker already exists")
+        else:
+            logger.info("Adding tests/features/common-docker as a submodule")
+            os.system('git submodule add https://github.com/Containers-Testing-Framework/common-features.git tests/features/common-features')
+
+        common_steps_dir = os.path.join(steps_dir, "common_steps")
+        if os.path.exists(common_steps_dir):
+            logger.info("Directory tests/steps/common_steps already exists")
+        else:
+            logger.info("Adding tests/steps/common_steps as a submodule")
+            os.system('git submodule add https://github.com/Containers-Testing-Framework/common-steps.git tests/steps/common_steps')
+
+        # Copy sample configuration
+        ctf_conf_file = os.path.join(self._execution_dir_path, "ctf.conf")
+        if os.path.exists(ctf_conf_file):
+            logger.info("File ctf.conf already exists")
+        else:
+            logger.info("Creating ctf.conf file")
+            # Create environment.py
+            with open(ctf_conf_file, "w") as f:
+                f.write(sample_ctl_ctf_config)
+            os.system("git add %s" % ctf_conf_file)
 
     def run(self):
         """
