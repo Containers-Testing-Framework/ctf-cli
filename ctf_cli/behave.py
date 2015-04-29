@@ -419,6 +419,7 @@ class BehaveRunner(object):
         """
         image = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_IMAGE)
         dockerfile = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE)
+        junit = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_JUNIT)
 
         # configuration file for ansible
         if self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) == 'ansible':
@@ -430,6 +431,10 @@ class BehaveRunner(object):
             'behave',
             '-D', 'DOCKERFILE={0}'.format(dockerfile),
         ]
+
+        if junit:
+            command.append('--junit')
+            command.append('--junit-directory={0}'.format(junit))
 
         if image:
             command.extend(['-D', 'IMAGE={0}'.format(image)])
