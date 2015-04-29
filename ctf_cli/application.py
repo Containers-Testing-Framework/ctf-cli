@@ -20,7 +20,7 @@ from ctf_cli.logger import logger
 from ctf_cli.config import CTFCliConfig
 from ctf_cli.behave import BehaveWorkingDirectory, BehaveRunner
 from ctf_cli.exceptions import CTFCliError
-from ctf_cli.common_environment import common_environment_py_content, sample_ctl_ctf_config
+from ctf_cli.common_environment import common_environment_py_content, sample_ctl_ctf_config, common_steps_py_content
 
 import os
 from subprocess import check_call
@@ -99,8 +99,16 @@ class Application(object):
             open(steps_init_file, "a").close()
             check_call("git add %s" % steps_init_file, shell=True)
 
-        # Add common-features and common-steps as submodules
+        steps_py_file = os.path.join(steps_dir, "steps.py")
+        if os.path.exists(steps_py_file):
+            logger.info("File tests/steps/steps.py already exists")
+        else:
+            logger.info("Creating tests/steps/steps.py file")
+            with open(steps_py_file, "w") as f:
+                f.write(common_steps_py_content)
+            check_call("git add %s" % steps_py_file, shell=True)
 
+        # Add common-features and common-steps as submodules
         # TODO:  make this generic when a different type of container is specified
         common_features_dir = os.path.join(features_dir, "common-features")
         if os.path.exists(common_features_dir):

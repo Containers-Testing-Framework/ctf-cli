@@ -157,3 +157,8 @@ Host=192.168.1.1
 Method=ssh
 User=root
 """
+
+common_steps_py_content = """# -*- coding: utf-8 -*-
+from common_steps.common_connection_steps import *
+from common_steps.common_docker_steps import *
+"""
