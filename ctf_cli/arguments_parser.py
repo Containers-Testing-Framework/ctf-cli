@@ -64,6 +64,13 @@ class ArgumentsParser(object):
             dest='image',
             help="Image to use for testing. If not passed, the image will be built from the Dockerfile."
         )
+        self.parser.add_argument(
+            "-j",
+            "--junit",
+            default=None,
+            dest='junit',
+            help="Junit folder to store results. If not passed junit reports will not be generated"
+        )
 
     def __getattr__(self, name):
         try:

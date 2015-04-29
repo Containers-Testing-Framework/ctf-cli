@@ -37,6 +37,7 @@ class CTFCliConfig(object):
     CONFIG_TESTS_CONFIG_PATH = 'TestsConfigPath'
     CONFIG_DOCKERFILE = 'Dockerfile'
     CONFIG_IMAGE = 'Image'
+    CONFIG_JUNIT = 'Junit'
     CONFIG_EXEC_TYPE = 'ExecType'
 
     ANSIBLE_SECTION_NAME = 'ansible'
@@ -97,6 +98,7 @@ class CTFCliConfig(object):
             self.CONFIG_DOCKERFILE: os.path.abspath(
                 cli_conf.dockerfile) if cli_conf.dockerfile else None,
             self.CONFIG_IMAGE: cli_conf.image,
+            self.CONFIG_JUNIT: cli_conf.junit,
             self.CONFIG_EXEC_TYPE: 'ansible',
         }}
 
