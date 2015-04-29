@@ -1,4 +1,6 @@
 # Containers Testing Framework CLI
+
+[![Join the chat at https://gitter.im/Containers-Testing-Framework/ctf-cli](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Containers-Testing-Framework/ctf-cli?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Containers Testng Framework (CTF) is a simple wrapper around [Behave testing framework](http://pythonhosted.org/behave/). Behave is promissing approach for testing containers, since it enables one to focus on describing the behavior of the container from High Level and in simple English. For more information on how to use Behave and how to write tests using Behave, please reffer to the Behave project page.
 
 CTF tries to reuse the remote execution of steps model from [UATFramework](https://github.com/aweiteka/UATFramework) so the tests can be executed locally or on remote machine or VM. The support is still in progress.
