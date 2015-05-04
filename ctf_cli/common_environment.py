@@ -24,7 +24,7 @@ common_environment_py_header = """# -*- coding: utf-8 -*-
 """
 
 common_environment_py_content = """
-#Some useful functions for your environment.py
+# Some useful functions for your environment.py
 import tempfile
 import shutil
 import ansible.runner
@@ -123,7 +123,7 @@ def before_all(context):
 
 def after_scenario(context, scenario):
     try:
-        if context.config.userdata['KEEP_IMAGE_AFTER_TEST']:
+        if context.config.userdata['KEEP_CONTAINER_AFTER_TEST']:
             return
     except KeyError, e:
         pass
