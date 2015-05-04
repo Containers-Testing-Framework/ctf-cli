@@ -121,8 +121,13 @@ def before_all(context):
     cid_file_name = re.sub(r'\W+', '', context.image)
     context.cid_file = "/tmp/%s.cid" % cid_file_name
 
+def after_scenario(context, scenario):
+    try:
+        if context.config.userdata['KEEP_CONTAINER_AFTER_TEST']:
+            return
+    except KeyError, e:
+        pass
 
-def before_scenario(context, scenario):
     try:
         cid = context.run('cat %s' % context.cid_file)
     except AssertionError, e:
