@@ -25,6 +25,7 @@ common_environment_py_header = """# -*- coding: utf-8 -*-
 
 common_environment_py_content = """
 # Some useful functions for your environment.py
+from types import ModuleType
 import tempfile
 import shutil
 import ansible.runner
@@ -33,8 +34,26 @@ import re
 import os
 import glob
 import stat
+import inspect
+import copy
+
+def _invoke_other_environment_hooks(*args):
+    # we need a copy of current frame becase it will change
+    frame_globals = copy.copy(inspect.currentframe().f_globals)
+    # get which function invoked us
+    current_function = inspect.stack()[1][3]
+    # iterate for all modules wich ends with _environemnt
+    # and execute current method from them
+    for g in frame_globals:
+        if isinstance(frame_globals[g], ModuleType):
+            if frame_globals[g].__name__.endswith("_environment"):
+                for func_name, func in inspect.getmembers(frame_globals[g], inspect.isfunction):
+                    if func_name == current_function:
+                        func(*args)
+
 
 def before_all(context):
+    _invoke_other_environment_hooks(context)
     try:
         ansible_cfg = context.config.userdata['ANSIBLE']
         inventory = ansible.inventory.Inventory(ansible_cfg)
@@ -122,6 +141,7 @@ def before_all(context):
     context.cid_file = "/tmp/%s.cid" % cid_file_name
 
 def after_scenario(context, scenario):
+    _invoke_other_environment_hooks(context ,scenario)
     try:
         if context.config.userdata['KEEP_CONTAINER_AFTER_TEST']:
             return
@@ -143,6 +163,7 @@ def after_scenario(context, scenario):
 
 
 def after_all(context):
+    _invoke_other_environment_hooks(context)
     if hasattr(context, 'temp_dir'):
         shutil.rmtree(context.temp_dir) #FIXME catch exception
 

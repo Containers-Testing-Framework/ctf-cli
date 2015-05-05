@@ -270,7 +270,9 @@ class BehaveWorkingDirectory(object):
         """
         project_env_py = glob.glob(os.path.join(self._working_dir, '*environment.py'))
         if project_env_py:
-            import_statement = 'from {0} import *'.format(os.path.basename(project_env_py[0]).replace('.py', ''))
+            module_name = os.path.basename(project_env_py[0]).replace('.py', '')
+            import_statement = 'from {0} import *\n'.format(module_name)
+            import_statement += 'import {0}'.format(module_name)
         else:
             import_statement = ''
 
