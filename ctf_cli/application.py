@@ -32,7 +32,8 @@ class Application(object):
         """
         self._execution_dir_path = os.getcwd()
         self._working_dir_path = os.path.join(self._execution_dir_path,
-                                              '{0}-behave-working-dir'.format(os.path.basename(self._execution_dir_path)))
+                                              'workdir')
+
         self._working_dir = None
         self._behave_runner = None
 
