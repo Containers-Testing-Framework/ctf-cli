@@ -50,7 +50,7 @@ The `tests.conf` file contains configuration telling the CTF what extra remote t
     Features=https://github.com/Containers-Testing-Framework/common-features.git
 
 ### environment.py
-You can implement some of the methods that are typically used with Behave inside this file. It will be combined with the CTF common `environment.py` file. This integration may not be perfect yet, feel free to test and provide feedback.
+You can implement any of the methods that are typically used with Behave inside this file. They will be combined with the CTF common `environment.py` file. And your methods will be invoked before the CTF hooks.
 
 ## CLI tool
 The key part of the framework is the CLI tool called `ctf-cli`. It gathers information, reads configurations, sets up the environment for Behave and runs it. Currently `ctf-cli` tool supports only ansible for running commands on some host. To run your tests make sure you included configuration for ansible in the `ctf-cli` configuration.
@@ -106,7 +106,6 @@ When `ctf-cli` is executed in `my_proj_dir` project directory the following happ
 - The steps done by CLI tool can be separated (prepare working dir, update working dir, run tests). This would allow one to do the partial workflow if needed.
 - Using specific commit for remote tests. This prevents surprises when someone breaks tests shared across multiple containers.
 - Testing containers combinations. Idea is to tag the containers by some roles (e.g. @webserver, @database, ...) and then access these containers just based on the tags in the steps. This way any webserver could be tested with any database, and so on.
-- Improve the handling of environment.py and provide some standard API, so the developer can add extra code to any standard method used in environment.py.
 - Integrate the framework with some CI
 - Add support for other ways of running command remotely besides ansible
 - Add remote hosts provisioning, startng, stopping
