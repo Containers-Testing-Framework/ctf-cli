@@ -52,13 +52,47 @@ The `tests.conf` file contains configuration telling the CTF what extra remote t
 ### environment.py
 You can implement any of the methods that are typically used with Behave inside this file. They will be combined with the CTF common `environment.py` file. And your methods will be invoked before the CTF hooks.
 
-## CLI tool
-The key part of the framework is the CLI tool called `ctf-cli`. It gathers information, reads configurations, sets up the environment for Behave and runs it. Currently `ctf-cli` tool supports only ansible for running commands on some host. To run your tests make sure you included configuration for ansible in the `ctf-cli` configuration.
+## Getting Started
 
 ### Requirements
 * git
 * behave >= 1.2.5
 * ansible
+
+### Installation
+
+1. Clone repositories
+```
+git clone https://github.com/Containers-Testing-Framework/ctf-cli.git
+git clone https://github.com/Containers-Testing-Framework/common-steps.git
+git clone https://github.com/Containers-Testing-Framework/common-features.git
+```
+1. Optional: clone an example repository
+```
+git clone https://github.com/Containers-Testing-Framework/example-project-postgresql.git
+```
+1. Change to ctf-cli directory
+```
+cd ctf-cli
+```
+1. Install python dependencies
+```
+[sudo] pip install -r requirements.txt
+```
+1. Copy sample configuration files and edit as necessary
+```
+cp ctf.conf.sample ctf.conf
+cp tests.conf.sample tests.conf
+```
+1. Change to project directory and run tests
+```
+cd example-project-postgresql
+../ctf-cli/ctf-cli.py
+```
+
+## CLI tool
+The key part of the framework is the CLI tool called `ctf-cli`. It gathers information, reads configurations, sets up the environment for Behave and runs it. Currently `ctf-cli` tool supports only ansible for running commands on some host. To run your tests make sure you included configuration for ansible in the `ctf-cli` configuration.
+
 
 ### Configuration file
 You can pass the path to the configuration file on the command line using the `-c` or `--cli-config` option. If not provided the tool tries to find the configuration in this order of preference:
