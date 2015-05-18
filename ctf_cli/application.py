@@ -16,14 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+from subprocess import check_call, CalledProcessError
+
 from ctf_cli.logger import logger
 from ctf_cli.config import CTFCliConfig
 from ctf_cli.behave import BehaveWorkingDirectory, BehaveRunner
 from ctf_cli.exceptions import CTFCliError
 from ctf_cli.common_environment import common_environment_py_content, sample_ctl_ctf_config, common_steps_py_content
-
-import os
-from subprocess import check_call
 
 
 class Application(object):
@@ -52,7 +52,7 @@ class Application(object):
         # Make sure we're in a directory under git control
         try:
             check_call('git rev-parse', shell=True)
-        except:
+        except CalledProcessError:
             logger.info("Directory is not under git control, running git init")
             check_call("git init", shell=True)
 
