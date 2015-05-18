@@ -47,6 +47,9 @@ The `tests.conf` file contains configuration telling the CTF what extra remote t
     Steps=https://github.com/Containers-Testing-Framework/common-steps.git
     Features=https://github.com/Containers-Testing-Framework/common-features.git
 
+#### This method is not recommended and will soon be deprecated - git submodules way would be preferred
+
+
 ### environment.py
 You can implement some of the methods that are typically used with Behave inside this file. It will be combined with the CTF common `environment.py` file. This integration may not be perfect yet, feel free to test and provide feedback.
 
