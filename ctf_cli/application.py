@@ -20,8 +20,10 @@ from ctf_cli.logger import logger
 from ctf_cli.config import CTFCliConfig
 from ctf_cli.behave import BehaveWorkingDirectory, BehaveRunner
 from ctf_cli.exceptions import CTFCliError
+from ctf_cli.common_environment import common_environment_py_content, sample_ctl_ctf_config, common_steps_py_content
 
 import os
+from subprocess import check_call
 
 
 class Application(object):
@@ -41,6 +43,105 @@ class Application(object):
             cli_args.cli_config_path = CTFCliConfig.find_cli_config(self._execution_dir_path)
         self._cli_conf = CTFCliConfig(cli_args)
 
+    def init(self):
+        """
+        Initialize default app test structure
+        """
+        logger.info("Initialize default directory structure")
+
+        # Make sure we're in a directory under git control
+        try:
+            check_call('git rev-parse', shell=True)
+        except:
+            logger.info("Directory is not under git control, running git init")
+            check_call("git init", shell=True)
+
+        # Create test dir if it is missing
+        tests_dir = os.path.join(self._execution_dir_path, "tests")
+        if os.path.exists(tests_dir):
+            logger.info("Directory tests already exists")
+        else:
+            logger.info("Creating tests directory")
+            os.mkdir(tests_dir)
+            check_call("git add %s" % tests_dir, shell=True)
+
+        env_py_path = os.path.join(tests_dir, "environment.py")
+        if os.path.exists(env_py_path):
+            logger.info("File tests/environment.py already exists")
+        else:
+            logger.info("Creating environment.py")
+            # Create environment.py
+            with open(env_py_path, "w") as f:
+                f.write(common_environment_py_content)
+            check_call("git add %s" % env_py_path, shell=True)
+
+        features_dir = os.path.join(tests_dir, "features")
+        if os.path.exists(features_dir):
+            logger.info("Directory tests/features already exists")
+        else:
+            logger.info("Creating tests/features directory")
+            os.mkdir(features_dir)
+            check_call("git add %s" % features_dir, shell=True)
+
+        steps_dir = os.path.join(tests_dir, "steps")
+        if os.path.exists(steps_dir):
+            logger.info("Directory tests/steps already exists")
+        else:
+            logger.info("Creating tests/steps directory")
+            os.mkdir(steps_dir)
+            check_call("git add %s" % steps_dir, shell=True)
+
+        # TODO: check that this file is actually necessary
+        steps_init_file = os.path.join(steps_dir, "__init__.py")
+        if os.path.exists(steps_init_file):
+            logger.info("File tests/steps/__init__.py already exists")
+        else:
+            logger.info("Creating tests/steps/__init__.py file")
+            open(steps_init_file, "a").close()
+            check_call("git add %s" % steps_init_file, shell=True)
+
+        steps_py_file = os.path.join(steps_dir, "steps.py")
+        if os.path.exists(steps_py_file):
+            logger.info("File tests/steps/steps.py already exists")
+        else:
+            logger.info("Creating tests/steps/steps.py file")
+            with open(steps_py_file, "w") as f:
+                f.write(common_steps_py_content)
+            check_call("git add %s" % steps_py_file, shell=True)
+
+        # Add common-features and common-steps as submodules
+        # TODO:  make this generic when a different type of container is specified
+        common_features_dir = os.path.join(features_dir, "common-features")
+        if os.path.exists(common_features_dir):
+            logger.info("Directory tests/features/common-features already exists")
+        else:
+            logger.info("Adding tests/features/common-features as a submodule")
+            check_call('git submodule add https://github.com/Containers-Testing-Framework/common-features.git tests/features/common-features', shell=True)
+
+        common_steps_dir = os.path.join(steps_dir, "common_steps")
+        if os.path.exists(common_steps_dir):
+            logger.info("Directory tests/steps/common_steps already exists")
+        else:
+            logger.info("Adding tests/steps/common_steps as a submodule")
+            check_call('git submodule add https://github.com/Containers-Testing-Framework/common-steps.git tests/steps/common_steps', shell=True)
+
+        # Copy sample configuration
+        ctf_conf_file = os.path.join(self._execution_dir_path, "ctf.conf")
+        if os.path.exists(ctf_conf_file):
+            logger.info("File ctf.conf already exists")
+        else:
+            logger.info("Creating ctf.conf file")
+            # Create environment.py
+            with open(ctf_conf_file, "w") as f:
+                f.write(sample_ctl_ctf_config)
+            check_call("git add %s" % ctf_conf_file, shell=True)
+
+    def run(self):
+        """
+        The main application execution method
+        """
+        logger.info("Running Containers Testing Framework cli")
+
         # If no Dockerfile passed on the cli, try to use one from the execution directory
         if not self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE):
             local_file = os.path.join(self._execution_dir_path, 'Dockerfile')
@@ -54,12 +155,6 @@ class Application(object):
         if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) != 'ansible':
             raise CTFCliError("Wrong ExecType configured. Currently only 'ansible' is supported!")
 
-    def run(self):
-        """
-        The main application execution method
-        """
-        logger.info("Running Containers Testing Framework cli")
-
         self._working_dir = BehaveWorkingDirectory(self._working_dir_path, self._cli_conf)
 
         # Setup Behave structure inside working directory
@@ -71,3 +166,20 @@ class Application(object):
         # Execute Behave
         self._behave_runner = BehaveRunner(self._working_dir, self._cli_conf)
         return self._behave_runner.run()
+
+    def update(self):
+        """
+        Update app submodules
+        """
+        logger.info("Updating Containers Testing Framework common steps and features")
+
+        common_steps_dir = os.path.join(self._execution_dir_path, "tests", "steps", "common_steps")
+        common_features_dir = os.path.join(self._execution_dir_path, "tests", "features", "common-features")
+        for directory in [common_steps_dir, common_features_dir]:
+            logger.info("Updating %s" % directory)
+            check_call("git fetch origin", shell=True, cwd=directory)
+            check_call("git checkout origin/master", shell=True, cwd=directory)
+
+        # Check that steps are not contradicting with each other
+        logger.info("Checking project steps sanity")
+        check_call("behave tests -d", shell=True)

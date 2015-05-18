@@ -168,3 +168,23 @@ def after_all(context):
         shutil.rmtree(context.temp_dir) #FIXME catch exception
 
 """
+
+sample_ctl_ctf_config = """
+[ctf]
+#Verbose=yes
+#CLIConfPath=/etc/ctf.conf
+#TestsConfigPath=/etc/ctf-tests.conf
+#Dockerfile=/home/user/my_cool_project/Dockerfile
+#Image=centos:centos7
+ExecType=ansible
+
+[ansible]
+Host=192.168.1.1
+Method=ssh
+User=root
+"""
+
+common_steps_py_content = """# -*- coding: utf-8 -*-
+from common_steps.common_connection_steps import *
+from common_steps.common_docker_steps import *
+"""
