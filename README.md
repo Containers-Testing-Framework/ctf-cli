@@ -1,6 +1,8 @@
 # Containers Testing Framework CLI
 
 [![Join the chat at https://gitter.im/Containers-Testing-Framework/ctf-cli](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Containers-Testing-Framework/ctf-cli?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Code Health](https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master/landscape.svg?style=flat)](https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master)
+
 Containers Testng Framework (CTF) is a simple wrapper around [Behave testing framework](http://pythonhosted.org/behave/). Behave is promissing approach for testing containers, since it enables one to focus on describing the behavior of the container from High Level and in simple English. For more information on how to use Behave and how to write tests using Behave, please reffer to the Behave project page.
 
 CTF tries to reuse the remote execution of steps model from [UATFramework](https://github.com/aweiteka/UATFramework) so the tests can be executed locally or on remote machine or VM. The support is still in progress.
@@ -147,6 +149,15 @@ When `ctf-cli` is executed in `my_proj_dir` project directory the following happ
 - Add support for other ways of running command remotely besides ansible
 - Add remote hosts provisioning, startng, stopping
  - support this for cloud, VMs, Vagrant boxes, etc.
+
+## Decisions made
+- we will go with submodules instead of tests.conf
+- it is not acceptable to expect users to directly call git - needed functionality has to be wrapped by CTF
+- remote features/steps should be added into tests/remote/... to prevent conflicts with project-specific features/steps
+- we will need export and import commands to export and import current project tests setup for sharing between projects
+- we can not expect that the project is using git (maybe create git repo if not using git only in the tests/ dir?)
+- tests.conf will be deprecated as it is used ATM
+- the "generated" environment.py should be kept clean and all containers specific code should be moved elsewhere. 
 
 ## References
 - [Behave](http://pythonhosted.org/behave/index.html)
