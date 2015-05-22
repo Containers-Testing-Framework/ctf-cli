@@ -3,15 +3,15 @@
 [![Join the chat at https://gitter.im/Containers-Testing-Framework/ctf-cli](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Containers-Testing-Framework/ctf-cli?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Code Health](https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master/landscape.svg?style=flat)](https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master)
 
-Containers Testng Framework (CTF) is a simple wrapper around [Behave testing framework](http://pythonhosted.org/behave/). Behave is promissing approach for testing containers, since it enables one to focus on describing the behavior of the container from High Level and in simple English. For more information on how to use Behave and how to write tests using Behave, please reffer to the Behave project page.
+Containers Testing Framework (CTF) is a simple wrapper around [Behave testing framework](http://pythonhosted.org/behave/). Behave is a promising approach for testing containers, since it enables one to focus on describing the behavior of the container from a High Level and in simple English. For more information on how to use Behave and how to write tests using Behave, please refer to the Behave project page.
 
-CTF tries to reuse the remote execution of steps model from [UATFramework](https://github.com/aweiteka/UATFramework) so the tests can be executed locally or on remote machine or VM. The support is still in progress.
+CTF tries to re-use the remote execution of steps model from [UATFramework](https://github.com/aweiteka/UATFramework) so the tests can be executed locally or on a remote machine or VM. The support is still in progress.
 
-### The CTF provides:
-- way for running tests on Dockerfiles and images
-- way to run project-specific tests (Steps and Features)
-- combination of multiple tests (Steps and Features) stored in remote repository
-- ability to run remote tests on specific Dockerfile and/or image without having any project-specific tests suite
+### CTF provides:
+- a way of running tests on Dockerfiles and images
+- a way to run project-specific tests (Steps and Features)
+- a combination of multiple tests (Steps and Features) stored in remote repository
+- the ability to run remote tests on specific Dockerfiles and/or images without having any project-specific tests suite
 
 ## How to use the framework for your containers?
 
@@ -28,7 +28,7 @@ If you want to implement project-specific tests, you should create the following
         environment.py
         tests.conf
 
-The best way to leverage the framework is to implement Features and Steps that are common for a set of containser as a remote tests and then just include it in the testing configuration of all containers.
+The best way to leverage the framework is to implement Features and Steps that are common for a set of containers as a remote test and then include it in the testing configuration of all containers.
 
 ### features/
 Place any features and scenarios, specific for your particular container inside this directory. Your scenarios can use any of the steps implemented inside `tests/steps` directory or steps from any remote test you listed inside the `tests.conf` file. CTF CLI tool will combine all these steps together, so that Behave is able to find them when run.
@@ -36,10 +36,10 @@ Place any features and scenarios, specific for your particular container inside 
 ### steps/
 Place any steps that are specific for your features inside this directory. To make sure the steps can be executed on the remote machine or locally, always use `context.run()` for running any commands. In the background, the command will be run locally or on remote machine, based on the CLI configuration.
 
-The CLI tool passes some runtime arguments to Behave, when executing it. The values are available through the context as `context.config.userdata` dictionary like object. To learn more about it, please read the [Behave documentation](http://pythonhosted.org/behave/new_and_noteworthy_v1.2.5.html#userdata).The following values are passed:
+The CLI tool passes some runtime arguments to Behave, when executing it. The values are available through the context as `context.config.userdata` dictionary like object. To learn more about it, please read the [Behave documentation](http://pythonhosted.org/behave/new_and_noteworthy_v1.2.5.html#userdata). The following values are passed:
 
 #### DOCKERFILE
-This option contains the absolute path to Dockerfile wich should be tested. It is always set.
+This option contains the absolute path to the Dockerfile wich should be tested. It is always set.
 
 #### IMAGE
 This option contains the name of the image to test. It is passed and set only if the name was passed to CLI tool using `-i` option.
