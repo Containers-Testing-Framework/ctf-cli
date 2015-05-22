@@ -4,7 +4,7 @@ MAINTAINER Aaron Weitekamp <aweiteka@redhat.com>
 
 RUN echo -e "[epel]\nname=epel\nenabled=1\nbaseurl=https://dl.fedoraproject.org/pub/epel/7/x86_64/\ngpgcheck=0" > /etc/yum.repos.d/epel.repo
 
-RUN yum install -y --setopt=tsflags=nodocs python-pip python-devel gcc docker git npm && \
+RUN yum install -y --setopt=tsflags=nodocs python-pip python-devel gcc docker git npm nmap-ncat && \
     yum clean all
 
 ADD ctf_cli/ /opt/ctf/ctf_cli/
