@@ -86,7 +86,7 @@ class CTFCliConfig(object):
         """
         Construct a dict from CLI arguments and add it to Config
 
-        :param cli_conf: ArgumentParser object initialized by CLI args
+        :param cli_conf: ArgumentsParser object initialized by CLI args
         :return: None
         """
         cli_settings = {self.GLOBAL_SECTION_NAME: {
