@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
 from subprocess import check_call, CalledProcessError
 
 from ctf_cli.logger import logger
@@ -165,7 +166,7 @@ class Application(object):
 
         # Execute Behave
         self._behave_runner = BehaveRunner(self._working_dir, self._cli_conf)
-        return self._behave_runner.run()
+        sys.exit(self._behave_runner.run())
 
     def update(self):
         """
