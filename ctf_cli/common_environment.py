@@ -78,9 +78,11 @@ def before_all(context):
     context.open_file = open_file
 
     def run(command):
+        if '{{' in command:
+            command = command.replace("{{", "{{ '{{").replace("}}", "}}' }}")
         logging.debug("Running '%s'" % command)
         context.result = ansible.runner.Runner(
-            module_name='shell',
+            module_name="shell",
             inventory=inventory,
             module_args="{0} chdir={1}".format(command, remote_dir)
         ).run()
@@ -88,7 +90,6 @@ def before_all(context):
         # dark means not responding
         if context.result['dark']:
             passed = False
-            print("dark")
             print(context.result)
         if not context.result['contacted']:
             passed = False
