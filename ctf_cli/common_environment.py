@@ -80,7 +80,7 @@ def before_all(context):
     def run(command):
         if '{{' in command:
             command = command.replace("{{", "{{ '{{").replace("}}", "}}' }}")
-        logging.debug("Running '%s'" % command)
+        logging.info("Running '%s'" % command)
         context.result = ansible.runner.Runner(
             module_name="shell",
             inventory=inventory,
@@ -100,6 +100,9 @@ def before_all(context):
                 print("stderr: {0}".format(values['stderr']))
                 print("cmd: {0}".format(values['cmd']))
                 assert False
+            logging.info('stdout:\\n%s' % values['stdout'])
+            if values['stderr']:
+                logging.info('stderr\\n:%s' % values['stderr'])
             return values['stdout']
     context.run = run
 
@@ -152,9 +155,10 @@ def after_scenario(context, scenario):
     try:
         cid = context.run('cat %s' % context.cid_file)
     except AssertionError, e:
-        logging.debug("before_scenario: {0}".format(e))
+        logging.info("before_scenario: {0}".format(e))
         return
     if cid:
+        context.run("docker logs %s" % cid)
         context.run("docker stop %s" % cid)
         context.run("docker kill %s" % cid)
         context.run("docker rm %s" % cid)
