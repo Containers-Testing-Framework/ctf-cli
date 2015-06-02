@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-# Simple DNS Proxy for simulating DNS issues
 # Copyright (C) 2014-2015  Red Hat, Inc.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -87,7 +86,7 @@ class CTFCliConfig(object):
         """
         Construct a dict from CLI arguments and add it to Config
 
-        :param cli_conf: ArgumentParser object initialized by CLI args
+        :param cli_conf: ArgumentsParser object initialized by CLI args
         :return: None
         """
         cli_settings = {self.GLOBAL_SECTION_NAME: {
