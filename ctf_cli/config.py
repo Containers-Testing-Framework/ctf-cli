@@ -38,6 +38,9 @@ class CTFCliConfig(object):
     CONFIG_IMAGE = 'Image'
     CONFIG_JUNIT = 'Junit'
     CONFIG_EXEC_TYPE = 'ExecType'
+    CONFIG_REMOTE_TYPE = 'remote_type'
+    CONFIG_REMOTE_URL = 'url'
+    CONFIG_REMOTE_PROJECT = 'project'
 
     ANSIBLE_SECTION_NAME = 'ansible'
     CONFIG_ANSIBLE_HOST = 'Host'
@@ -99,8 +102,10 @@ class CTFCliConfig(object):
             self.CONFIG_IMAGE: cli_conf.image,
             self.CONFIG_JUNIT: cli_conf.junit,
             self.CONFIG_EXEC_TYPE: 'ansible',
+            self.CONFIG_REMOTE_TYPE: cli_conf.remote_type,
+            self.CONFIG_REMOTE_URL: cli_conf.url,
+            self.CONFIG_REMOTE_PROJECT: cli_conf.project,
         }}
-
         self.config_parser_read_dict(self._config, cli_settings)
 
     def __getattr__(self, name):

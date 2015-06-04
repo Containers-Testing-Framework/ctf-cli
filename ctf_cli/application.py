@@ -127,6 +127,33 @@ class Application(object):
                 f.write(sample_ctl_ctf_config)
             check_call("git add %s" % ctf_conf_file, shell=True)
 
+    def add_remote(self):
+        if 'feature' in self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_TYPE):
+            self.add_remote_feature()
+        else:
+            self.add_remote_step()
+
+    def add_remote_feature(self):
+        project = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
+        if project is None:
+            path = "tests/features/common-remote"
+        else:
+            path = "tests/features/" + project
+        self.add_submodule(path)
+
+    def add_remote_step(self):
+        project = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
+        if project is None:
+            path = "tests/steps/common-remote"
+        else:
+            path = "tests/steps/" + project
+        self.add_submodule(path)
+
+    def add_submodule(self, path):
+        url = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_URL)
+        print (url)
+        check_call('git submodule add %s %s' % (url, path), shell=True)
+
     def run(self):
         """
         The main application execution method

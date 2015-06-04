@@ -25,53 +25,83 @@ class ArgumentsParser(object):
     def __init__(self, args=None):
         """ parse arguments """
         self.parser = argparse.ArgumentParser(description='CLI for running Containers Testing Framework')
+        self.subparsers = self.parser.add_subparsers(dest="cli_action")
         self.add_args()
+        self.add_remote_subparser()
+        self.add_init_subparser()
+        self.add_run_subparser()
+        self.add_update_subparser()
         self.args = self.parser.parse_args(args)
 
-    def add_args(self):
-        self.parser.add_argument(
-            dest='cli_action',
-            choices=['init', 'run', 'update'],
-            default=['init', 'run'],
-            nargs='?',
-            help="Action to perform (default - init and run)"
-        )
-        self.parser.add_argument(
-            "-v",
-            "--verbose",
-            default=False,
-            action="store_true",
-            help="Output is more verbose (recommended)"
-        )
-        self.parser.add_argument(
+    def add_remote_add_subparser(self, subparser):
+        subparser.add_argument(
+            dest='remote_type',
+            choices=['steps', 'features'],
+            )
+
+        subparser.add_argument(
+            dest='url',
+            help='module url'
+            )
+        
+        subparser.add_argument(
+            "--project",
+            dest='project',
+            help="name of test project")
+
+    def add_remote_remove_subparser(self, subparser):
+        subparser.add_argument(
+            dest='remote_type',
+            choices=['steps', 'features'],
+            )
+        
+        subparser.add_argument(
+            dest='url',
+            help='module url'
+            )
+
+        subparser.add_argument(
+            "--project",
+            dest='project',
+            help="name of test project")
+        
+    def add_remote_subparser(self):
+        remote_subparser=self.subparsers.add_parser('remote', help='addidng/removing test suites')
+        remote_oper_subparser=remote_subparser.add_subparsers(dest='remote_action')
+        self.add_remote_add_subparser(remote_oper_subparser.add_parser('add', help='add remote repository'))
+        self.add_remote_remove_subparser(remote_oper_subparser.add_parser('remove', help='remove remote repository'))
+
+    def add_run_subparser(self):
+        run_subparser=self.subparsers.add_parser('run', help="run test suite - default")
+        run_subparser.add_argument(
             "-c",
             "--cli-config",
             default=None,
             dest='cli_config_path',
             help="Path to CLI configuration file (By default use only CLI arguments and default values)"
         )
-        self.parser.add_argument(
+        run_subparser.add_argument(
             "-t",
             "--tests-config",
             default=None,
             dest='tests_config_path',
             help="Path to tests configuration file. By default it will be searched for in test/ dir"
         )
-        self.parser.add_argument(
+        run_subparser.add_argument(
             "-f",
             "--dockerfile",
             default=None,
             dest='dockerfile',
             help="Path to Dockerfile to use. If not passed, will be searched for in the current directory"
         )
-        self.parser.add_argument(
+        run_subparser.add_argument(
             "-i",
             "--image",
             default=None,
             dest='image',
             help="Image to use for testing. If not passed, the image will be built from the Dockerfile."
         )
-        self.parser.add_argument(
+        run_subparser.add_argument(
             "-j",
             "--junit",
             default=None,
@@ -79,8 +109,27 @@ class ArgumentsParser(object):
             help="Junit folder to store results. If not passed junit reports will not be generated"
         )
 
+    def add_update_subparser(self):
+        update_subparser=self.subparsers.add_parser('update', help="update suites")
+
+    def add_init_subparser(self):
+        init_subparser=self.subparsers.add_parser('init', help="update suites")
+
+    def add_args(self):
+        self.parser.add_argument(
+            "-v",
+            "--verbose",
+            default=False,
+            action="store_true",
+            help="Output is more verbose (recommended)"
+        )
+
+
     def __getattr__(self, name):
         try:
             return getattr(self.args, name)
         except AttributeError:
-            return object.__getattribute__(self, name)
+            try:
+                return object.__getattribute__(self, name)
+            except AttributeError:
+                return None
