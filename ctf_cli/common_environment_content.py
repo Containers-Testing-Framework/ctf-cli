@@ -43,7 +43,7 @@ def before_all(context):
             inventory=inventory,
             module_args='src={0} dest={1}'.format(
                 path, context.temp_dir)).run()
-        for host, value in ret['contacted'].iteritems():
+        for _, value in ret['contacted'].iteritems():
             try:
                 ret_file = open(value['dest'])
                 return ret_file

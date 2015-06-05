@@ -325,7 +325,7 @@ class BehaveWorkingDirectory(object):
         """
         imports = []
 
-        for (dirpath, dirnames, filenames) in os.walk(path, followlinks=True):
+        for (dirpath, _, filenames) in os.walk(path, followlinks=True):
             module = dirpath.replace(path, '').strip(os.sep).replace(os.sep, '.')
             # generate imports for the *.py files in the current dir
 
@@ -357,7 +357,7 @@ class BehaveWorkingDirectory(object):
         """
         files = []
 
-        for (dirpath, dirnames, filenames) in os.walk(path, followlinks=True):
+        for (dirpath, _, filenames) in os.walk(path, followlinks=True):
             if skip_root and dirpath == path:
                 continue
 
