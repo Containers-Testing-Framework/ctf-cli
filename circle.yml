@@ -1,0 +1,21 @@
+machine:
+  services:
+    - docker
+  python:
+    version: 2.7
+  environment:
+    COVERALLS_REPO_TOKEN: RDQpf8yX7quK5FXKN2auJpAxFNlIByLiT
+
+
+dependencies:
+  pre:
+    - pip install --use-mirrors coverage python-coveralls
+
+test:
+  override:
+    - mkdir test_dir
+    - cd test_dir && COVERAGE_FILE=../.coverage.init coverage run ../ctf-cli.py init
+    - cd test_dir && COVERAGE_FILE=../.coverage.update coverage run ../ctf-cli.py update
+    - cd test_dir && COVERAGE_FILE=../.coverage.run coverage run ../ctf-cli.py run
+    - coverage combine
+    - coveralls

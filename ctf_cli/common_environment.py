@@ -35,7 +35,7 @@ ExecType=ansible
 
 [ansible]
 Host=192.168.1.1
-Method=ssh
+Method=local
 User=root
 """
 
