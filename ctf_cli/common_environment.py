@@ -161,9 +161,12 @@ def after_scenario(context, scenario):
         return
     if cid:
         context.run("docker logs %s" % cid)
-        context.run("docker stop %s" % cid)
-        context.run("docker kill %s" % cid)
-        context.run("docker rm %s" % cid)
+        try:
+            context.run("docker stop %s" % cid)
+            context.run("docker kill %s" % cid)
+            context.run("docker rm -v %s" % cid)
+        except AssertionError:
+            pass
         if hasattr(context, 'cid'):
             del context.cid
         context.run('rm {0}'.format(context.cid_file))
