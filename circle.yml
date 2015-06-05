@@ -1,0 +1,12 @@
+machine:
+  services:
+    - docker
+  python:
+    version: 2.7
+
+test:
+  override:
+    - mkdir test_dir
+    - cd test_dir && ../ctf-cli.py init
+    - cd test_dir && ../ctf-cli.py update
+    - cd test_dir && ../ctf-cli.py run
