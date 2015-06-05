@@ -26,7 +26,8 @@ from six.moves.configparser import ConfigParser, NoSectionError, NoOptionError
 from ctf_cli.logger import logger
 from ctf_cli.exceptions import CTFCliError
 from ctf_cli.config import CTFCliConfig
-from ctf_cli.common_environment import common_environment_py_content, common_environment_py_header
+from ctf_cli.common_environment import common_environment_py_header
+from ctf_cli import __path__
 
 class BehaveTestsConfig(object):
     """
@@ -277,10 +278,11 @@ class BehaveWorkingDirectory(object):
             import_statement = ''
 
         # create the environment.py
-        with open(os.path.join(self._working_dir, 'environment.py'), 'w') as f:
+        with open(os.path.join(self._working_dir, 'environment.py'), 'w') as f, \
+             open(os.path.join(__path__[0], 'common_environment_content.py'), 'r') as src:
             logger.debug("Writing '%s'", os.path.join(self._working_dir, 'environment.py'))
             f.write(common_environment_py_header.format(project_env_py_import=import_statement))
-            f.write(common_environment_py_content)
+            f.write(src.read())
 
     def _add_remote_steps(self):
         """
