@@ -146,11 +146,12 @@ class Application(object):
         # If no Dockerfile passed on the cli, try to use one from the execution directory
         if not self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE):
             local_file = os.path.join(self._execution_dir_path, 'Dockerfile')
-            if not os.path.isfile(local_file):
-                raise CTFCliError("No Dockerfile passed on the cli and no Dockerfile "
-                                  "is present in the current directory!")
-            logger.debug("Using Dockerfile from the current directory.")
-            self._cli_conf.set(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE, local_file)
+            if os.path.isfile(local_file):
+                logger.debug("Using Dockerfile from the current directory.")
+                self._cli_conf.set(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE, local_file)
+            else:
+                logger.debug("No Dockerfile specified and none found in current directory.")
+                self._cli_conf.set(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE, None)
 
         # TODO: Remove this or rework, once more types are implemented
         if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) != 'ansible':
