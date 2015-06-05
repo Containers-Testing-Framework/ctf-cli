@@ -29,6 +29,7 @@ from ctf_cli.config import CTFCliConfig
 from ctf_cli.common_environment import common_environment_py_header
 from ctf_cli import __path__
 
+
 class BehaveTestsConfig(object):
     """
     Configuration parser for tests configuration
