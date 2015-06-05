@@ -1,7 +1,7 @@
 # Containers Testing Framework CLI
 
 [![Join the chat at https://gitter.im/Containers-Testing-Framework/ctf-cli](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Containers-Testing-Framework/ctf-cli?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Code Health](https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master/landscape.svg?style=flat)](https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master)
+[![Code Health](https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master/landscape.svg?style=flat)](https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master)[![Coverage Status](https://coveralls.io/repos/vrutkovs/ctf-cli/badge.svg?branch=ci)](https://coveralls.io/r/vrutkovs/ctf-cli?branch=ci)
 
 Containers Testing Framework (CTF) is a simple wrapper around [Behave testing framework](http://pythonhosted.org/behave/). Behave is a promising approach for testing containers, since it enables one to focus on describing the behavior of the container from a High Level and in simple English. For more information on how to use Behave and how to write tests using Behave, please refer to the Behave project page.
 
