@@ -106,32 +106,39 @@ def before_all(context):
             return values['stdout']
     context.run = run
 
-    # copy dockerfile
-    dockerfile = context.config.userdata['DOCKERFILE']
-    dockerfile_dir = os.path.dirname(dockerfile)
-    # create remote directory
-    ansible.runner.Runner(
-        module_name='file',
-        inventory=inventory,
-        module_args='dest={0} state=directory'.format(remote_dir)
-        ).run()
-    # copy dockerfile
-    ansible.runner.Runner(
-        module_name='copy',
-        inventory=inventory,
-        module_args='src={0} dest={1}'.format(dockerfile, remote_dir)
-        ).run()
-    # copy files from dockerfile
-    f_in = open(dockerfile)
-    for path in re.findall('(?:ADD|COPY) ([^ ]+) ', f_in.read()):
-        for glob_path in glob.glob(os.path.join(dockerfile_dir,path)):
-            # TODO Is there a nicer way to keep permissions?
+    def copy_dockerfile():
+
+        try:
+            # copy dockerfile
+            dockerfile = context.config.userdata['DOCKERFILE']
+            dockerfile_dir = os.path.dirname(dockerfile)
+            # create remote directory
+            ansible.runner.Runner(
+                module_name='file',
+                inventory=inventory,
+                module_args='dest={0} state=directory'.format(remote_dir)
+                ).run()
+            # copy dockerfile
             ansible.runner.Runner(
                 module_name='copy',
                 inventory=inventory,
-                module_args='src={0} dest={1} directory_mode mode={2}'.format(glob_path, remote_dir,
-                    oct(stat.S_IMODE(os.stat(glob_path).st_mode)))
-            ).run()
+                module_args='src={0} dest={1}'.format(dockerfile, remote_dir)
+                ).run()
+            # copy files from dockerfile
+            f_in = open(dockerfile)
+            for path in re.findall('(?:ADD|COPY) ([^ ]+) ', f_in.read()):
+                for glob_path in glob.glob(os.path.join(dockerfile_dir,path)):
+                    # TODO Is there a nicer way to keep permissions?
+                    ansible.runner.Runner(
+                        module_name='copy',
+                        inventory=inventory,
+                        module_args='src={0} dest={1} directory_mode mode={2}'.format(glob_path, remote_dir,
+                            oct(stat.S_IMODE(os.stat(glob_path).st_mode)))
+                    ).run()
+        except Exception as e:
+            logging.warning("copy_dockerfile:%s" % e)
+
+    copy_dockerfile()
 
     # build image if not exist
     try:
@@ -141,7 +148,10 @@ def before_all(context):
         pass
     except KeyError:
         context.image = 'ctf'
-        run('docker build -t {0} .'.format(context.image))
+        try:
+            run('docker build -t {0} .'.format(context.image))
+        except AssertionError:
+            pass
 
     cid_file_name = re.sub(r'\W+', '', context.image)
     context.cid_file = "/tmp/%s.cid" % cid_file_name
