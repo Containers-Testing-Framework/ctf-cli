@@ -29,6 +29,7 @@ from ctf_cli.config import CTFCliConfig
 from ctf_cli.common_environment import common_environment_py_header
 from ctf_cli import __path__
 
+
 class BehaveTestsConfig(object):
     """
     Configuration parser for tests configuration
@@ -219,8 +220,8 @@ class BehaveWorkingDirectory(object):
         """
         project_steps_dir = os.path.join(self._project_tests_dir, 'steps')
         if os.path.exists(project_steps_dir):
-            logger.info("Using project specific Steps from '%s'", project_steps_dir.replace(self._execution_dir
-                                                                                            + os.sep, ''))
+            logger.info("Using project specific Steps from '%s'",
+                        project_steps_dir.replace(self._execution_dir + os.sep, ''))
             shutil.copytree(project_steps_dir, os.path.join(self._steps_dir,
                                                             '{0}_steps'.format(os.path.basename(
                                                                 self._execution_dir).replace('-', '_'))))
@@ -237,8 +238,8 @@ class BehaveWorkingDirectory(object):
         """
         project_features_dir = os.path.join(self._project_tests_dir, 'features')
         if os.path.exists(project_features_dir):
-            logger.info("Using project specific Features from '%s'", project_features_dir.replace(self._execution_dir
-                                                                                                  + os.sep, ''))
+            logger.info("Using project specific Features from '%s'",
+                        project_features_dir.replace(self._execution_dir + os.sep, ''))
             shutil.copytree(project_features_dir, os.path.join(self._features_dir,
                                                                '{0}_features'.format(os.path.basename(
                                                                    self._execution_dir).replace('-', '_'))))
@@ -324,7 +325,7 @@ class BehaveWorkingDirectory(object):
         """
         imports = []
 
-        for (dirpath, dirnames, filenames) in os.walk(path, followlinks=True):
+        for (dirpath, _, filenames) in os.walk(path, followlinks=True):
             module = dirpath.replace(path, '').strip(os.sep).replace(os.sep, '.')
             # generate imports for the *.py files in the current dir
 
@@ -356,7 +357,7 @@ class BehaveWorkingDirectory(object):
         """
         files = []
 
-        for (dirpath, dirnames, filenames) in os.walk(path, followlinks=True):
+        for (dirpath, _, filenames) in os.walk(path, followlinks=True):
             if skip_root and dirpath == path:
                 continue
 

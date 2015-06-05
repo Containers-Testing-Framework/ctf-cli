@@ -168,7 +168,7 @@ class Application(object):
         common_steps_dir = os.path.join(self._execution_dir_path, "tests", "steps", "common_steps")
         common_features_dir = os.path.join(self._execution_dir_path, "tests", "features", "common-features")
         for directory in [common_steps_dir, common_features_dir]:
-            logger.info("Updating %s" % directory)
+            logger.info("Updating %s", directory)
             check_call("git fetch origin", shell=True, cwd=directory)
             check_call("git checkout origin/master", shell=True, cwd=directory)
 

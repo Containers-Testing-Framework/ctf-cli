@@ -43,7 +43,7 @@ def before_all(context):
             inventory=inventory,
             module_args='src={0} dest={1}'.format(
                 path, context.temp_dir)).run()
-        for host, value in ret['contacted'].iteritems():
+        for _, value in ret['contacted'].iteritems():
             try:
                 ret_file = open(value['dest'])
                 return ret_file
@@ -55,7 +55,7 @@ def before_all(context):
     def run(command):
         if '{{' in command:
             command = command.replace("{{", "{{ '{{").replace("}}", "}}' }}")
-        logging.info("Running '%s'" % command)
+        logging.info("Running '%s'", command)
         context.result = ansible.runner.Runner(
             module_name="shell",
             inventory=inventory,
@@ -72,9 +72,9 @@ def before_all(context):
                 print("stderr: {0}".format(values['stderr']))
                 print("cmd: {0}".format(values['cmd']))
                 assert False
-            logging.info('stdout:\\n%s' % values['stdout'])
+            logging.info('stdout:\\n%s', values['stdout'])
             if values['stderr']:
-                logging.info('stderr\\n:%s' % values['stderr'])
+                logging.info('stderr\\n:%s', values['stderr'])
             return values['stdout']
     context.run = run
 
@@ -109,7 +109,7 @@ def before_all(context):
                             oct(stat.S_IMODE(os.stat(glob_path).st_mode)))
                     ).run()
         except Exception as e:
-            logging.warning("copy_dockerfile:%s" % e)
+            logging.warning("copy_dockerfile:%s", e)
 
     copy_dockerfile()
 
@@ -141,7 +141,7 @@ def after_scenario(context, scenario):
     try:
         cid = context.run('cat %s' % context.cid_file)
     except AssertionError as e:
-        logging.info("before_scenario: {0}".format(e))
+        logging.info("before_scenario: %s", e)
         return
     if cid:
         context.run("docker logs %s" % cid)
