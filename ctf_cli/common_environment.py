@@ -137,6 +137,8 @@ def before_all(context):
     try:
         context.image = context.config.userdata['IMAGE']
         run('docker pull {0}'.format(context.image))
+    except AssertionError:
+        pass
     except KeyError:
         context.image = 'ctf'
         run('docker build -t {0} .'.format(context.image))
