@@ -24,7 +24,7 @@ from ctf_cli.logger import logger
 from ctf_cli.config import CTFCliConfig
 from ctf_cli.behave import BehaveWorkingDirectory, BehaveRunner
 from ctf_cli.exceptions import CTFCliError
-from ctf_cli.common_environment import common_environment_py_content, sample_ctl_ctf_config, common_steps_py_content
+from ctf_cli.common_environment import sample_ctl_ctf_config, common_steps_py_content
 
 
 class Application(object):
@@ -65,16 +65,6 @@ class Application(object):
             logger.info("Creating tests directory")
             os.mkdir(tests_dir)
             check_call("git add %s" % tests_dir, shell=True)
-
-        env_py_path = os.path.join(tests_dir, "environment.py")
-        if os.path.exists(env_py_path):
-            logger.info("File tests/environment.py already exists")
-        else:
-            logger.info("Creating environment.py")
-            # Create environment.py
-            with open(env_py_path, "w") as f:
-                f.write(common_environment_py_content)
-            check_call("git add %s" % env_py_path, shell=True)
 
         features_dir = os.path.join(tests_dir, "features")
         if os.path.exists(features_dir):
