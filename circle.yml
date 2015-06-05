@@ -19,3 +19,7 @@ test:
     - cd test_dir && COVERAGE_FILE=../.coverage.run coverage run ../ctf-cli.py run
     - coverage combine
     - coveralls
+
+notify:
+  webhooks:
+    - url: https://webhooks.gitter.im/e/92b168ffacdc38a6facd
