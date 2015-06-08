@@ -9,7 +9,7 @@ machine:
 
 dependencies:
   pre:
-    - pip install --use-mirrors coverage python-coveralls
+    - pip install --use-mirrors coverage python-coveralls nose
 
 test:
   override:
@@ -17,6 +17,7 @@ test:
     - cd test_dir && COVERAGE_FILE=../.coverage.init coverage run ../ctf-cli.py init
     - cd test_dir && COVERAGE_FILE=../.coverage.update coverage run ../ctf-cli.py update
     - cd test_dir && COVERAGE_FILE=../.coverage.run coverage run ../ctf-cli.py run
+    - COVERAGE_FILE=.coverage.tests nosetests
     - coverage combine
     - coveralls
 
