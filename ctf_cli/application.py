@@ -100,22 +100,6 @@ class Application(object):
                 f.write(common_steps_py_content)
             check_call("git add %s" % steps_py_file, shell=True)
 
-        # Add common-features and common-steps as submodules
-        # TODO:  make this generic when a different type of container is specified
-        common_features_dir = os.path.join(features_dir, "common-features")
-        if os.path.exists(common_features_dir):
-            logger.info("Directory tests/features/common-features already exists")
-        else:
-            logger.info("Adding tests/features/common-features as a submodule")
-            check_call('git submodule add https://github.com/Containers-Testing-Framework/common-features.git tests/features/common-features', shell=True)
-
-        common_steps_dir = os.path.join(steps_dir, "common_steps")
-        if os.path.exists(common_steps_dir):
-            logger.info("Directory tests/steps/common_steps already exists")
-        else:
-            logger.info("Adding tests/steps/common_steps as a submodule")
-            check_call('git submodule add https://github.com/Containers-Testing-Framework/common-steps.git tests/steps/common_steps', shell=True)
-
         # Copy sample configuration
         ctf_conf_file = os.path.join(self._execution_dir_path, "ctf.conf")
         if os.path.exists(ctf_conf_file):
