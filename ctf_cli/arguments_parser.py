@@ -51,20 +51,9 @@ class ArgumentsParser(object):
 
     def add_remote_remove_subparser(self, subparser):
         subparser.add_argument(
-            dest='remote_type',
-            choices=['steps', 'features'],
-            )
-        
-        subparser.add_argument(
-            dest='url',
-            help='module url'
+            dest='name'
             )
 
-        subparser.add_argument(
-            "--project",
-            dest='project',
-            help="name of test project")
-        
     def add_remote_subparser(self):
         remote_subparser=self.subparsers.add_parser('remote', help='addidng/removing test suites')
         remote_oper_subparser=remote_subparser.add_subparsers(dest='remote_action')

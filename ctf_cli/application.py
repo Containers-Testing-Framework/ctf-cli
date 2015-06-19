@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import shutil
 import sys
 from subprocess import check_call, CalledProcessError
 
@@ -139,6 +140,12 @@ class Application(object):
     def add_submodule(self, path):
         url = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_URL)
         check_call('git submodule add %s %s' % (url, path), shell=True)
+
+    def remove_remote(self):
+        name = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_NAME)
+        check_call('git submodule deinit -f %s' %name, shell=True)
+        check_call('git config -f .gitmodules --remove-section "submodule.%s"' %name, shell=True)
+        shutil.rmtree(name)
 
     def run(self):
         """
