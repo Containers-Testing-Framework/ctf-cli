@@ -70,6 +70,7 @@ class ArgumentsParser(object):
         remote_oper_subparser=remote_subparser.add_subparsers(dest='remote_action')
         self.add_remote_add_subparser(remote_oper_subparser.add_parser('add', help='add remote repository'))
         self.add_remote_remove_subparser(remote_oper_subparser.add_parser('remove', help='remove remote repository'))
+        remote_oper_subparser.add_parser('list', help='list remote repositories')
 
     def add_run_subparser(self):
         run_subparser=self.subparsers.add_parser('run', help="run test suite - default")

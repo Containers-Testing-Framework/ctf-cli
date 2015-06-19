@@ -149,9 +149,11 @@ class Application(object):
             path = "tests/steps/" + project
         self.add_submodule(path)
 
+    def list_remotes(self):
+        check_call("git submodule foreach 'git config --get remote.origin.url'", shell=True)
+
     def add_submodule(self, path):
         url = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_URL)
-        print (url)
         check_call('git submodule add %s %s' % (url, path), shell=True)
 
     def run(self):
