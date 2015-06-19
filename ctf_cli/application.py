@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import shutil
 import sys
 from subprocess import check_call, CalledProcessError
 
@@ -24,7 +25,7 @@ from ctf_cli.logger import logger
 from ctf_cli.config import CTFCliConfig
 from ctf_cli.behave import BehaveWorkingDirectory, BehaveRunner
 from ctf_cli.exceptions import CTFCliError
-from ctf_cli.common_environment import common_environment_py_content, sample_ctl_ctf_config, common_steps_py_content
+from ctf_cli.common_environment import sample_ctl_ctf_config, common_steps_py_content
 
 
 class Application(object):
@@ -66,16 +67,6 @@ class Application(object):
             os.mkdir(tests_dir)
             check_call("git add %s" % tests_dir, shell=True)
 
-        env_py_path = os.path.join(tests_dir, "environment.py")
-        if os.path.exists(env_py_path):
-            logger.info("File tests/environment.py already exists")
-        else:
-            logger.info("Creating environment.py")
-            # Create environment.py
-            with open(env_py_path, "w") as f:
-                f.write(common_environment_py_content)
-            check_call("git add %s" % env_py_path, shell=True)
-
         features_dir = os.path.join(tests_dir, "features")
         if os.path.exists(features_dir):
             logger.info("Directory tests/features already exists")
@@ -110,22 +101,6 @@ class Application(object):
                 f.write(common_steps_py_content)
             check_call("git add %s" % steps_py_file, shell=True)
 
-        # Add common-features and common-steps as submodules
-        # TODO:  make this generic when a different type of container is specified
-        common_features_dir = os.path.join(features_dir, "common-features")
-        if os.path.exists(common_features_dir):
-            logger.info("Directory tests/features/common-features already exists")
-        else:
-            logger.info("Adding tests/features/common-features as a submodule")
-            check_call('git submodule add https://github.com/Containers-Testing-Framework/common-features.git tests/features/common-features', shell=True)
-
-        common_steps_dir = os.path.join(steps_dir, "common_steps")
-        if os.path.exists(common_steps_dir):
-            logger.info("Directory tests/steps/common_steps already exists")
-        else:
-            logger.info("Adding tests/steps/common_steps as a submodule")
-            check_call('git submodule add https://github.com/Containers-Testing-Framework/common-steps.git tests/steps/common_steps', shell=True)
-
         # Copy sample configuration
         ctf_conf_file = os.path.join(self._execution_dir_path, "ctf.conf")
         if os.path.exists(ctf_conf_file):
@@ -137,6 +112,41 @@ class Application(object):
                 f.write(sample_ctl_ctf_config)
             check_call("git add %s" % ctf_conf_file, shell=True)
 
+    def add_remote(self):
+        if 'feature' in self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_TYPE):
+            self.add_remote_feature()
+        else:
+            self.add_remote_step()
+
+    def add_remote_feature(self):
+        project = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
+        if project is None:
+            path = "tests/features/common-remote"
+        else:
+            path = "tests/features/" + project
+        self.add_submodule(path)
+
+    def add_remote_step(self):
+        project = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
+        if project is None:
+            path = "tests/steps/common-remote"
+        else:
+            path = "tests/steps/" + project
+        self.add_submodule(path)
+
+    def list_remotes(self):
+        check_call("git submodule foreach 'git config --get remote.origin.url'", shell=True)
+
+    def add_submodule(self, path):
+        url = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_URL)
+        check_call('git submodule add %s %s' % (url, path), shell=True)
+
+    def remove_remote(self):
+        name = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_NAME)
+        check_call('git submodule deinit -f %s' %name, shell=True)
+        check_call('git config -f .gitmodules --remove-section "submodule.%s"' %name, shell=True)
+        shutil.rmtree(name)
+
     def run(self):
         """
         The main application execution method
@@ -146,11 +156,12 @@ class Application(object):
         # If no Dockerfile passed on the cli, try to use one from the execution directory
         if not self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE):
             local_file = os.path.join(self._execution_dir_path, 'Dockerfile')
-            if not os.path.isfile(local_file):
-                raise CTFCliError("No Dockerfile passed on the cli and no Dockerfile "
-                                  "is present in the current directory!")
-            logger.debug("Using Dockerfile from the current directory.")
-            self._cli_conf.set(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE, local_file)
+            if os.path.isfile(local_file):
+                logger.debug("Using Dockerfile from the current directory.")
+                self._cli_conf.set(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE, local_file)
+            else:
+                logger.debug("No Dockerfile specified and none found in current directory.")
+                self._cli_conf.set(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE, None)
 
         # TODO: Remove this or rework, once more types are implemented
         if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) != 'ansible':
@@ -177,7 +188,7 @@ class Application(object):
         common_steps_dir = os.path.join(self._execution_dir_path, "tests", "steps", "common_steps")
         common_features_dir = os.path.join(self._execution_dir_path, "tests", "features", "common-features")
         for directory in [common_steps_dir, common_features_dir]:
-            logger.info("Updating %s" % directory)
+            logger.info("Updating %s", directory)
             check_call("git fetch origin", shell=True, cwd=directory)
             check_call("git checkout origin/master", shell=True, cwd=directory)
 

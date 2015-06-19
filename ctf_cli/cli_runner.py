@@ -35,9 +35,7 @@ class CliRunner(object):
         try:
             # add application-wide debug log
             LoggerHelper.add_debug_log_file(os.getcwd())
-
             args = ArgumentsParser(sys.argv[1:])
-
             if args.verbose is True:
                 LoggerHelper.add_stream_handler(logger,
                                                 logging.Formatter('%(levelname)s:\t%(message)s'),
@@ -54,6 +52,14 @@ class CliRunner(object):
                 app.run()
             if 'update' in args.cli_action:
                 app.update()
+            if 'remote' in args.cli_action:
+                if 'add' in args.remote_action:
+                    app.add_remote()
+                if 'remove' in args.remote_action:
+                    app.remove_remote()
+                if 'list' in args.remote_action:
+                    app.list_remotes()
+
         except KeyboardInterrupt:
             logger.info('Interrupted by user')
         except CTFCliError as e:
