@@ -111,10 +111,10 @@ class ArgumentsParser(object):
         )
 
     def add_update_subparser(self):
-        update_subparser=self.subparsers.add_parser('update', help="update suites")
+        self.subparsers.add_parser('update', help="update suites")
 
     def add_init_subparser(self):
-        init_subparser=self.subparsers.add_parser('init', help="update suites")
+        self.subparsers.add_parser('init', help="update suites")
 
     def add_args(self):
         self.parser.add_argument(
