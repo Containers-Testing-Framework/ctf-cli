@@ -101,6 +101,13 @@ class Application(object):
                 f.write(common_steps_py_content)
             check_call("git add %s" % steps_py_file, shell=True)
 
+        common_steps_dir = os.path.join(steps_dir, "common_steps")
+        if os.path.exists(common_steps_dir):
+            logger.info("Directory tests/steps/common_steps already exists")
+        else:
+            logger.info("Adding tests/steps/common_steps as a submodule")
+            check_call('git submodule add https://github.com/Containers-Testing-Framework/common-steps.git tests/steps/common_steps', shell=True)
+            
         # Copy sample configuration
         ctf_conf_file = os.path.join(self._execution_dir_path, "ctf.conf")
         if os.path.exists(ctf_conf_file):
@@ -183,15 +190,6 @@ class Application(object):
         """
         Update app submodules
         """
-        logger.info("Updating Containers Testing Framework common steps and features")
+        logger.info("Updating remote test and feautres")
 
-        common_steps_dir = os.path.join(self._execution_dir_path, "tests", "steps", "common_steps")
-        common_features_dir = os.path.join(self._execution_dir_path, "tests", "features", "common-features")
-        for directory in [common_steps_dir, common_features_dir]:
-            logger.info("Updating %s", directory)
-            check_call("git fetch origin", shell=True, cwd=directory)
-            check_call("git checkout origin/master", shell=True, cwd=directory)
-
-        # Check that steps are not contradicting with each other
-        logger.info("Checking project steps sanity")
-        check_call("behave tests -d", shell=True)
+        check_call("git submodule foreach git pull --rebase", shell=True)
