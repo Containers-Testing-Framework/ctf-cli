@@ -139,7 +139,7 @@ class Application(object):
 
     def add_submodule(self, path):
         url = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_URL)
-        dirname = os.path.splitext(os.path.basename(url))[0]
+        dirname = os.path.splitext(os.path.basename(url))[0].replace('-', '_')
         check_call('git submodule add %s %s' % (url, path + "/" + dirname), shell=True)
 
     def remove_remote(self):
