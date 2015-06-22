@@ -100,13 +100,6 @@ class Application(object):
             with open(steps_py_file, "w") as f:
                 f.write(common_steps_py_content)
             check_call("git add %s" % steps_py_file, shell=True)
-
-        common_steps_dir = os.path.join(steps_dir, "common_steps")
-        if os.path.exists(common_steps_dir):
-            logger.info("Directory tests/steps/common_steps already exists")
-        else:
-            logger.info("Adding tests/steps/common_steps as a submodule")
-            check_call('git submodule add https://github.com/Containers-Testing-Framework/common-steps.git tests/steps/common_steps', shell=True)
             
         # Copy sample configuration
         ctf_conf_file = os.path.join(self._execution_dir_path, "ctf.conf")
@@ -128,7 +121,7 @@ class Application(object):
     def add_remote_feature(self):
         project = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
         if project is None:
-            path = "tests/features/common-remote"
+            path = "tests/features/"
         else:
             path = "tests/features/" + project
         self.add_submodule(path)
@@ -136,7 +129,7 @@ class Application(object):
     def add_remote_step(self):
         project = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
         if project is None:
-            path = "tests/steps/common-remote"
+            path = "tests/steps/"
         else:
             path = "tests/steps/" + project
         self.add_submodule(path)
@@ -146,7 +139,8 @@ class Application(object):
 
     def add_submodule(self, path):
         url = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_URL)
-        check_call('git submodule add %s %s' % (url, path), shell=True)
+        dirname = os.path.splitext(os.path.basename(url))[0]
+        check_call('git submodule add %s %s' % (url, path + "/" + dirname), shell=True)
 
     def remove_remote(self):
         name = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_NAME)
