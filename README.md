@@ -70,8 +70,6 @@ You can implement any of the methods that are typically used with Behave inside 
 1. Clone repositories
 ```
 git clone https://github.com/Containers-Testing-Framework/ctf-cli.git
-git clone https://github.com/Containers-Testing-Framework/common-steps.git
-git clone https://github.com/Containers-Testing-Framework/common-features.git
 ```
 1. Optional: clone an example repository
 ```
@@ -90,10 +88,14 @@ cd ctf-cli
 cp ctf.conf.sample ctf.conf
 cp tests.conf.sample tests.conf
 ```
-1. Change to project directory and run tests
+1. Change to project directory and get common features
 ```
 cd example-project-postgresql
-../ctf-cli/ctf-cli.py
+../ctf-cli/ctf-cli.py remote add features https://github.com/Containers-Testing-Framework/common-features.git
+```
+1. Run tests
+```
+../ctf-cli/ctf-cli.py run
 ```
 
 ## CLI tool
