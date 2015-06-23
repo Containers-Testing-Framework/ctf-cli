@@ -1,6 +1,6 @@
 # Containers Testing Framework CLI
 
-[![Circle CI](https://circleci.com/gh/Containers-Testing-Framework/ctf-cli.svg?style=svg)](https://circleci.com/gh/Containers-Testing-Framework/ctf-cli)[![Code Health](https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master/landscape.svg?style=flat)](https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master)[![Coverage Status](https://coveralls.io/repos/vrutkovs/ctf-cli/badge.svg?branch=ci)](https://coveralls.io/r/vrutkovs/ctf-cli?branch=ci)
+[![Circle CI](https://circleci.com/gh/Containers-Testing-Framework/ctf-cli.svg?style=svg)](https://circleci.com/gh/Containers-Testing-Framework/ctf-cli)[![Code Health](https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master/landscape.svg?style=flat)](https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master)[![Coverage Status](https://coveralls.io/repos/Containers-Testing-Framework/ctf-cli/badge.svg?branch=master)](https://coveralls.io/r/Containers-Testing-Framework/ctf-cli?branch=master)
 
 [![Join the chat at https://gitter.im/Containers-Testing-Framework/ctf-cli](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Containers-Testing-Framework/ctf-cli?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
