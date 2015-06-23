@@ -69,3 +69,6 @@ class CliRunner(object):
             sys.exit(0)
         finally:
             logger.debug('Exiting...')
+
+def run():
+    CliRunner.run()
