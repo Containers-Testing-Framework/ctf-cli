@@ -34,8 +34,8 @@ class CTFCliConfig(object):
     CONFIG_VERBOSE = 'Verbose'
     CONFIG_CLI_CONFIG_PATH = 'CLIConfigPath'
     CONFIG_TESTS_CONFIG_PATH = 'TestsConfigPath'
-    CONFIG_DOCKERFILE = 'Dockerfile'
-    CONFIG_IMAGE = 'Image'
+    CONFIG_BEHAVE_DATA = 'BehaveData'
+    CONFIG_BEHAVE_TAGS = 'BehaveTags'
     CONFIG_JUNIT = 'Junit'
     CONFIG_EXEC_TYPE = 'ExecType'
     CONFIG_REMOTE_TYPE = 'remote_type'
@@ -98,9 +98,8 @@ class CTFCliConfig(object):
             self.CONFIG_CLI_CONFIG_PATH: os.path.abspath(cli_conf.cli_config_path) if cli_conf.cli_config_path else '',
             self.CONFIG_TESTS_CONFIG_PATH: os.path.abspath(
                 cli_conf.tests_config_path)if cli_conf.tests_config_path else None,
-            self.CONFIG_DOCKERFILE: os.path.abspath(
-                cli_conf.dockerfile) if cli_conf.dockerfile else None,
-            self.CONFIG_IMAGE: cli_conf.image,
+            self.CONFIG_BEHAVE_DATA: cli_conf.behave_data,
+            self.CONFIG_BEHAVE_TAGS: cli_conf.behave_tags,
             self.CONFIG_JUNIT: cli_conf.junit,
             self.CONFIG_EXEC_TYPE: 'ansible',
             self.CONFIG_REMOTE_TYPE: cli_conf.remote_type,
