@@ -446,12 +446,16 @@ class BehaveRunner(object):
 
         if behave_data:
             #FIXME hacky otherwise it return string - seems like wierd buig in config.py
-            for userdata in behave_data.split('\n'):
+            if type(behave_data) is str:
+                behave_data = behave_data.split('\n')
+            for userdata in behave_data:
                 command.extend(['-D', '{0}'.format(userdata)])
 
         if behave_tags:
             #FIXME hacky otherwise it return string - seems like wierd buig in config.py
-            for tag in behave_tags.split('\n'):
+            if type(behave_tags) is str:
+                behave_tags = behave_tags.split('\n')
+            for tag in behave_tags:
                 command.extend(['-t', '{0}'.format(tag)])
                 if verbose != "yes":
                     command.append('--no-skipped')
