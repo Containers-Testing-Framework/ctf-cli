@@ -422,8 +422,9 @@ class BehaveRunner(object):
         Run Behave and pass some runtime arguments
         :return:
         """
-        image = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_IMAGE)
-        dockerfile = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_DOCKERFILE)
+
+        behave_data = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_BEHAVE_DATA)
+        behave_tags = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_BEHAVE_TAGS)
         junit = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_JUNIT)
         verbose = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_VERBOSE)
 
@@ -434,8 +435,7 @@ class BehaveRunner(object):
             ansible_conf = None
 
         command = [
-            'behave',
-            '-D', 'DOCKERFILE={0}'.format(dockerfile),
+            'behave'
         ]
         if verbose == "yes":
             command.append('-v')
@@ -444,8 +444,21 @@ class BehaveRunner(object):
             command.append('--junit')
             command.append('--junit-directory={0}'.format(junit))
 
-        if image:
-            command.extend(['-D', 'IMAGE={0}'.format(image)])
+        if behave_data:
+            #FIXME hacky otherwise it return string - seems like wierd buig in config.py
+            if type(behave_data) is str:
+                behave_data = behave_data.split('\n')
+            for userdata in behave_data:
+                command.extend(['-D', '{0}'.format(userdata)])
+
+        if behave_tags:
+            #FIXME hacky otherwise it return string - seems like wierd buig in config.py
+            if type(behave_tags) is str:
+                behave_tags = behave_tags.split('\n')
+            for tag in behave_tags:
+                command.extend(['-t', '{0}'.format(tag)])
+                if verbose != "yes":
+                    command.append('--no-skipped')
 
         if ansible_conf:
             command.extend(['-D', 'ANSIBLE={0}'.format(ansible_conf)])

@@ -18,7 +18,7 @@ test:
     - cd test_dir && COVAREGE_FILE=../.coverage.remote_steps coverage run ../ctf-cli.py remote add steps https://github.com/Containers-Testing-Framework/common-steps.git
     - cd test_dir && COVAREGE_FILE=../.coverage.remote_feature coverage run ../ctf-cli.py remote add features https://github.com/Containers-Testing-Framework/common-features.git
     - cd test_dir && COVERAGE_FILE=../.coverage.update coverage run ../ctf-cli.py update
-    - cd test_dir && COVERAGE_FILE=../.coverage.run coverage run ../ctf-cli.py run
+    - cd test_dir && COVERAGE_FILE=../.coverage.run coverage run ../ctf-cli.py run --behave-data DOCKERFILE=Dockerfile
     - COVERAGE_FILE=.coverage.tests nosetests
     - coverage combine
     - coveralls

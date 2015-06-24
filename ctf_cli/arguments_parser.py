@@ -78,18 +78,20 @@ class ArgumentsParser(object):
             help="Path to tests configuration file. By default it will be searched for in test/ dir"
         )
         run_subparser.add_argument(
-            "-f",
-            "--dockerfile",
+            "-d",
+            "--behave-data",
+            action='append',
             default=None,
-            dest='dockerfile',
-            help="Path to Dockerfile to use. If not passed, will be searched for in the current directory"
+            dest='behave_data',
+            help="A way to set behave userdata"
         )
         run_subparser.add_argument(
-            "-i",
-            "--image",
+            "-b",
+            "--behave-tags",
+            action='append',
             default=None,
-            dest='image',
-            help="Image to use for testing. If not passed, the image will be built from the Dockerfile."
+            dest='behave_tags',
+            help="A way to set behave test tags"
         )
         run_subparser.add_argument(
             "-j",
