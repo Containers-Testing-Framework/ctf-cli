@@ -14,3 +14,12 @@ Feature: Run parameters
         Using defaults:
         logging_format %(levelname)s:%(name)s:%(message)s
         """
+
+  Scenario: Run with working directory
+    Given a directory named "workdir"
+     When I successfully run "ctf-cli -v run"
+     Then the command output should contain:
+        """
+        DEBUG:	Working directory '{__WORKDIR__}/workdir' exists. Removing it!
+        DEBUG:	Creating working directory '/tmp/__WORKDIR__/workdir'.
+        """
