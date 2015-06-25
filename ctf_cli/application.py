@@ -135,7 +135,7 @@ class Application(object):
         self.add_submodule(path)
 
     def list_remotes(self):
-        check_call("git submodule foreach 'git config --get remote.origin.url'", shell=True)
+        check_call("git submodule -q foreach 'git config --get remote.origin.url'", shell=True)
 
     def add_submodule(self, path):
         url = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_URL)
