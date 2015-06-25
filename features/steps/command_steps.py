@@ -291,6 +291,33 @@ def step_remove_directory(context, directory):
         shutil.rmtree(path_, ignore_errors=True)
     assert_that(not os.path.isdir(path_))
 
+@step(u'I rename the directory "{directory}" to "{destination}"')
+def step_rename_directory(context, directory, destination):
+    path_ = directory
+    if not os.path.isabs(directory):
+        path_ = os.path.join(context.workdir, os.path.normpath(directory))
+    dst = destination
+    if not os.path.isabs(dst):
+        dst = os.path.join(context.workdir, os.path.normpath(dst))
+    if os.path.isdir(path_):
+        os.rename(path_, dst)
+    assert_that(not os.path.isdir(path_))
+    assert_that(os.path.isdir(dst))
+
+@step(u'I move the directory "{directory}" to "{destination}"')
+def step_move_directory(context, directory, destination):
+    path_ = directory
+    if not os.path.isabs(directory):
+        path_ = os.path.join(context.workdir, os.path.normpath(directory))
+    dst = destination
+    if not os.path.isabs(dst):
+        dst = os.path.join(context.workdir, os.path.normpath(dst))
+    if os.path.isdir(path_):
+        shutil.move(path_, dst)
+        import ipdb;  ipdb.set_trace()
+    assert_that(not os.path.isdir(path_))
+    assert_that(os.path.isdir(dst))
+
 @given(u'I ensure that the directory "{directory}" does not exist')
 def step_given_the_directory_should_not_exist(context, directory):
     step_remove_directory(context, directory)
