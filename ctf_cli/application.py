@@ -53,10 +53,10 @@ class Application(object):
 
         # Make sure we're in a directory under git control
         try:
-            check_call('git rev-parse', shell=True)
+            check_call('git rev-parse &> /dev/null', shell=True)
         except CalledProcessError:
             logger.info("Directory is not under git control, running git init")
-            check_call("git init", shell=True)
+            check_call("git init &> /dev/null", shell=True)
 
         # Create test dir if it is missing
         tests_dir = os.path.join(self._execution_dir_path, "tests")
@@ -174,6 +174,6 @@ class Application(object):
         """
         Update app submodules
         """
-        logger.info("Updating remote test and feautres")
+        logger.info("Updating remote test and features")
 
         check_call("git submodule foreach git pull --rebase", shell=True)
