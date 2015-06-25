@@ -15,7 +15,7 @@ import command_shell, command_util, pathutil, textutil
 from pathutil import posixpath_normpath
 import os
 import shutil
-from hamcrest import assert_that, equal_to, is_not, contains_string
+from hamcrest import assert_that, equal_to, is_not
 
 # -----------------------------------------------------------------------------
 # INIT:

@@ -3,11 +3,10 @@
 from __future__ import absolute_import
 import os.path
 import os
-import tempfile
 
 # -----------------------------------------------------------------------------
 # CONSTANTS:
 # -----------------------------------------------------------------------------
 HERE = os.path.dirname(__file__)
-TOP  = '/tmp'
+TOP = '/tmp'
 TOPA = os.path.abspath(TOP)

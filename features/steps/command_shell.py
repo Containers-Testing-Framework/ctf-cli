@@ -13,7 +13,7 @@ and running features, etc.
 """
 
 from __future__ import absolute_import, print_function, with_statement
-from __setup import TOP, HERE
+from __setup import HERE
 import os.path
 import six
 import subprocess
