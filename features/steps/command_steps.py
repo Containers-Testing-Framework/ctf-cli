@@ -166,10 +166,11 @@ def step_command_output_should_contain_text(context, text):
         Then the command output should contain "TEXT"
     '''
     expected_text = text
-    if "{__WORKDIR__}" in expected_text or "{__CWD__}" in expected_text:
+    if "{__WORKDIR__}" in text or "{__CWD__}" in text or "{__HOME__}" in text:
         expected_text = textutil.template_substitute(text,
-             __WORKDIR__ = posixpath_normpath(context.workdir),
-             __CWD__     = posixpath_normpath(os.getcwd())
+            __WORKDIR__ = posixpath_normpath(context.workdir),
+            __CWD__     = posixpath_normpath(os.getcwd()),
+            __HOME__    = posixpath_normpath(os.path.expanduser('~'))
         )
     actual_output = context.command_result.output
     if DEBUG:
@@ -186,10 +187,11 @@ def step_command_output_should_not_contain_text(context, text):
         then the command output should not contain "TEXT"
     '''
     expected_text = text
-    if "{__WORKDIR__}" in text or "{__CWD__}" in text:
+    if "{__WORKDIR__}" in text or "{__CWD__}" in text or "{__HOME__}" in text:
         expected_text = textutil.template_substitute(text,
-             __WORKDIR__ = posixpath_normpath(context.workdir),
-             __CWD__     = posixpath_normpath(os.getcwd())
+            __WORKDIR__ = posixpath_normpath(context.workdir),
+            __CWD__     = posixpath_normpath(os.getcwd()),
+            __HOME__    = posixpath_normpath(os.path.expanduser('~'))
         )
     actual_output  = context.command_result.output
     if DEBUG:
@@ -210,10 +212,11 @@ def step_command_output_should_contain_exactly_text(context, text):
         Then the command output should contain "Hello"
     """
     expected_text = text
-    if "{__WORKDIR__}" in text or "{__CWD__}" in text:
+    if "{__WORKDIR__}" in text or "{__CWD__}" in text or "{__HOME__}" in text:
         expected_text = textutil.template_substitute(text,
-             __WORKDIR__ = posixpath_normpath(context.workdir),
-             __CWD__     = posixpath_normpath(os.getcwd())
+            __WORKDIR__ = posixpath_normpath(context.workdir),
+            __CWD__     = posixpath_normpath(os.getcwd()),
+            __HOME__    = posixpath_normpath(os.path.expanduser('~'))
         )
     actual_output  = context.command_result.output
     textutil.assert_text_should_contain_exactly(actual_output, expected_text)
@@ -222,10 +225,11 @@ def step_command_output_should_contain_exactly_text(context, text):
 @then(u'the command output should not contain exactly "{text}"')
 def step_command_output_should_not_contain_exactly_text(context, text):
     expected_text = text
-    if "{__WORKDIR__}" in text or "{__CWD__}" in text:
+    if "{__WORKDIR__}" in text or "{__CWD__}" in text or "{__HOME__}" in text:
         expected_text = textutil.template_substitute(text,
-             __WORKDIR__ = posixpath_normpath(context.workdir),
-             __CWD__     = posixpath_normpath(os.getcwd())
+            __WORKDIR__ = posixpath_normpath(context.workdir),
+            __CWD__     = posixpath_normpath(os.getcwd()),
+            __HOME__    = posixpath_normpath(os.path.expanduser('~'))
         )
     actual_output  = context.command_result.output
     textutil.assert_text_should_not_contain_exactly(actual_output, expected_text)
@@ -290,6 +294,14 @@ def step_remove_directory(context, directory):
 @given(u'I ensure that the directory "{directory}" does not exist')
 def step_given_the_directory_should_not_exist(context, directory):
     step_remove_directory(context, directory)
+
+@given(u'a directory outside the workdir named "{path}"')
+def directory_named_dirname(context, path):
+    assert context.workdir, "REQUIRE: context.workdir"
+    path_ = os.path.expanduser(os.path.normpath(path))
+    if not os.path.exists(path_):
+        os.makedirs(path_)
+    assert os.path.isdir(path_)
 
 @given(u'a directory named "{path}"')
 def step_directory_named_dirname(context, path):
@@ -376,16 +388,44 @@ def step_file_named_filename_should_not_exist(context, filename):
     filename_ = pathutil.realpath_with_context(filename, context)
     assert_that(not os.path.exists(filename_))
 
+@step(u'I remove the file "{filename}"')
+def step_remove_file(context, filename):
+    path_ = os.path.expanduser(filename)
+    if not os.path.isabs(path_):
+        path_ = os.path.join(context.workdir, os.path.normpath(filename))
+    if os.path.isfile(path_):
+        os.remove(path_)
+    assert_that(not os.path.isfile(path_))
+
+@given(u'I ensure that the file "{filename}" does not exist')
+def step_given_the_file_should_not_exist(context, filename):
+    step_remove_file(context, filename)
+
+@step(u'I move the file "{filename}" to "{destination}"')
+def step_move_file(context, filename, destination):
+    path_ = os.path.expanduser(filename)
+    if not os.path.isabs(path_):
+        path_ = os.path.join(context.workdir, os.path.normpath(filename))
+    dst = destination
+    if not os.path.isabs(dst):
+        dst = os.path.expanduser(os.path.normpath(destination))
+    new_path = os.path.join(dst, filename)
+    if os.path.isfile(path_):
+        shutil.move(path_, new_path)
+    assert_that(not os.path.isfile(path_))
+    assert_that(os.path.isfile(new_path))
+
 # -----------------------------------------------------------------------------
 # STEPS FOR FILE CONTENTS:
 # -----------------------------------------------------------------------------
 @then(u'the file "{filename}" should contain "{text}"')
 def step_file_should_contain_text(context, filename, text):
     expected_text = text
-    if "{__WORKDIR__}" in text or "{__CWD__}" in text:
+    if "{__WORKDIR__}" in text or "{__CWD__}" in text or "{__HOME__}" in text:
         expected_text = textutil.template_substitute(text,
             __WORKDIR__ = posixpath_normpath(context.workdir),
-            __CWD__     = posixpath_normpath(os.getcwd())
+            __CWD__     = posixpath_normpath(os.getcwd()),
+            __HOME__    = posixpath_normpath(os.path.expanduser('~'))
         )
     file_contents = pathutil.read_file_contents(filename, context=context)
     file_contents = file_contents.rstrip()

@@ -1,6 +1,6 @@
 Feature: Run parameters
 
-Scenario: Verbose
+  Scenario: Verbose
     Given a new working directory
     When I successfully run "git init"
      And I successfully run "ctf-cli init"

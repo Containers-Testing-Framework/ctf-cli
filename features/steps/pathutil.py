@@ -31,6 +31,7 @@ def realpath_with_context(path, context):
     :param context: Behave context object (with :attr:`context.workdir`)
     :return: Converted path.
     """
+    path = os.path.expanduser(path)
     if not os.path.isabs(path):
         # XXX ensure_workdir_exists(context)
         assert context.workdir
