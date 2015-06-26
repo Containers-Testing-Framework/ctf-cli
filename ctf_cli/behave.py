@@ -122,7 +122,6 @@ class BehaveWorkingDirectory(object):
         :return:
         """
         self._check_working_dir()
-        self._setup_dir_structure()
 
         if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) == 'ansible':
             self._create_ansible_config()
@@ -201,16 +200,6 @@ class BehaveWorkingDirectory(object):
         logger.debug("Creating working directory '%s'.", self._working_dir)
         os.mkdir(self._working_dir)
 
-    def _setup_dir_structure(self):
-        """
-        Create directory structure and create git repo where appropriate
-        :return:
-        """
-        logger.debug("Setting up Behave working directory")
-
-        for d in (self._features_dir, self._steps_dir):
-            os.mkdir(d)
-
     def _add_project_specific_steps(self):
         """
         Adds project specific steps from execution_dir/test/steps into the
@@ -222,9 +211,7 @@ class BehaveWorkingDirectory(object):
         if os.path.exists(project_steps_dir):
             logger.info("Using project specific Steps from '%s'",
                         project_steps_dir.replace(self._execution_dir + os.sep, ''))
-            shutil.copytree(project_steps_dir, os.path.join(self._steps_dir,
-                                                            '{0}_steps'.format(os.path.basename(
-                                                                self._execution_dir).replace('-', '_'))))
+            shutil.copytree(project_steps_dir, self._steps_dir)
 
         else:
             logger.warning("Not using project specific Steps. '%s' does not exist!", project_steps_dir)
@@ -240,9 +227,7 @@ class BehaveWorkingDirectory(object):
         if os.path.exists(project_features_dir):
             logger.info("Using project specific Features from '%s'",
                         project_features_dir.replace(self._execution_dir + os.sep, ''))
-            shutil.copytree(project_features_dir, os.path.join(self._features_dir,
-                                                               '{0}_features'.format(os.path.basename(
-                                                                   self._execution_dir).replace('-', '_'))))
+            shutil.copytree(project_features_dir, self._features_dir)
         else:
             logger.warning("Not using project specific Features. '%s' does not exist!", project_features_dir)
 
@@ -257,9 +242,7 @@ class BehaveWorkingDirectory(object):
         if os.path.exists(project_environment_py):
             logger.info("Using project specific environment.py from '%s'", project_environment_py.replace(
                 self._execution_dir + os.sep, ''))
-            shutil.copy(project_environment_py, os.path.join(self._working_dir,
-                                                             '{0}_environment.py'.format(os.path.basename(
-                                                                 self._execution_dir).replace('-', '_'))))
+            shutil.copy(project_environment_py, self._working_dir)
         else:
             logger.warning("Not using project specific environment.py. '%s' does not exist!", project_environment_py)
 
@@ -326,13 +309,17 @@ class BehaveWorkingDirectory(object):
         imports = []
 
         for (dirpath, _, filenames) in os.walk(path, followlinks=True):
-            module = dirpath.replace(path, '').strip(os.sep).replace(os.sep, '.')
             # generate imports for the *.py files in the current dir
 
             # skip hidden directories and their subdirs
             dirs = [x for x in dirpath.replace(path, '').split(os.sep) if x.startswith('.')]
             if dirs:
                 logger.debug("Skipping, since dirpath '%s' contains hidden dir: %s", dirpath, str(dirs))
+                continue
+
+            module = dirpath.replace(path, '').strip(os.sep).replace(os.sep, '.')
+            # Skip top-level dir - those will be imported by behave automatically
+            if module == '':
                 continue
 
             for f in filenames:
