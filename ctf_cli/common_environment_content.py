@@ -67,17 +67,24 @@ def before_all(context):
         if not context.result['contacted']:
             print("no contacted hosts")
         for host, values in context.result['contacted'].iteritems():
-            if values['rc'] != 0:
-                print("On {0} returned {1}".format(host, values['rc']))
-                if 'stderr' in values:
-                    print("stderr: {0}".format(values['stderr']))
-                if 'cmd' in values:
-                    print("cmd: {0}".format(values['cmd']))
-                assert False
-            logging.info('stdout:\\n%s', values['stdout'])
+            logging.info("On {0} returned {1}".format(host, values['rc']))
+
+            if 'cmd' in values:
+                logging.info("cmd: {0}".format(values['cmd']))
             if 'stderr' in values:
-                logging.info('stderr\\n:%s', values['stderr'])
-            return values['stdout']
+                logging.info('stderr:%s', values['stderr'])
+
+            result = ''
+            if 'msg' in values:
+                logging.info('msg:%s', values['msg'])
+                result = values['msg']
+            if 'stdout' in values:
+                logging.info('stdout:%s', values['stdout'])
+                result = values['stdout']
+
+            if values['rc'] != 0:
+                assert False
+            return result
     context.run = run
 
     def copy_dockerfile():
