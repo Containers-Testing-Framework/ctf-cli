@@ -26,8 +26,6 @@ from six.moves.configparser import ConfigParser, NoSectionError, NoOptionError
 from ctf_cli.logger import logger
 from ctf_cli.exceptions import CTFCliError
 from ctf_cli.config import CTFCliConfig
-from ctf_cli.common_environment import common_environment_py_header
-from ctf_cli import __path__
 
 
 class BehaveTestsConfig(object):
