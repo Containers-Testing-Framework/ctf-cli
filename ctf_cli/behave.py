@@ -273,41 +273,6 @@ class BehaveWorkingDirectory(object):
                 raise CTFCliError("Cloning of {0} failed!\n{1}".format(remote_repo, str(e)))
 
     @staticmethod
-    def get_import_statements(path):
-        """
-        Generate import statements
-
-        :param path: path to dir from which to generate import statements
-        :return: list of strings containing import statement
-        """
-        imports = []
-
-        for (dirpath, _, filenames) in os.walk(path, followlinks=True):
-            # generate imports for the *.py files in the current dir
-
-            # skip hidden directories and their subdirs
-            dirs = [x for x in dirpath.replace(path, '').split(os.sep) if x.startswith('.')]
-            if dirs:
-                logger.debug("Skipping, since dirpath '%s' contains hidden dir: %s", dirpath, str(dirs))
-                continue
-
-            module = dirpath.replace(path, '').strip(os.sep).replace(os.sep, '.')
-            # Skip top-level dir - those will be imported by behave automatically
-            if module == '':
-                continue
-
-            for f in filenames:
-                # skip NON Python files
-                if not f.endswith('.py'):
-                    continue
-                if f == '__init__.py':
-                    continue
-
-                logger.debug("Adding import for '%s'", os.path.join(dirpath, f))
-                imports.append('from {0}.{1} import *'.format(module, f.replace('.py', '')))
-        return imports
-
-    @staticmethod
     def check_and_add_init_py(path, skip_root=False):
         """
         Checks if __init__.py is in all subdirs under the given path
