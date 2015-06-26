@@ -69,11 +69,13 @@ def before_all(context):
         for host, values in context.result['contacted'].iteritems():
             if values['rc'] != 0:
                 print("On {0} returned {1}".format(host, values['rc']))
-                print("stderr: {0}".format(values['stderr']))
-                print("cmd: {0}".format(values['cmd']))
+                if 'stderr' in values:
+                    print("stderr: {0}".format(values['stderr']))
+                if 'cmd' in values:
+                    print("cmd: {0}".format(values['cmd']))
                 assert False
             logging.info('stdout:\\n%s', values['stdout'])
-            if values['stderr']:
+            if 'stderr' in values:
                 logging.info('stderr\\n:%s', values['stderr'])
             return values['stdout']
     context.run = run

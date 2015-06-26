@@ -9,18 +9,14 @@ machine:
 
 dependencies:
   pre:
-    - pip install --use-mirrors coverage python-coveralls nose
+    - pip install --use-mirrors behave coverage PyHamcrest python-coveralls nose
+  override:
+    - python setup.py -q install
 
 test:
   override:
-    - mkdir test_dir
-    - cd test_dir && COVERAGE_FILE=../.coverage.init coverage run ../ctf-cli.py init
-    - cd test_dir && COVAREGE_FILE=../.coverage.remote_steps coverage run ../ctf-cli.py remote add steps https://github.com/Containers-Testing-Framework/common-steps.git
-    - cd test_dir && COVAREGE_FILE=../.coverage.remote_feature coverage run ../ctf-cli.py remote add features https://github.com/Containers-Testing-Framework/common-features.git
-    - cd test_dir && COVERAGE_FILE=../.coverage.update coverage run ../ctf-cli.py update
-    - cd test_dir && COVERAGE_FILE=../.coverage.run coverage run ../ctf-cli.py run --behave-data DOCKERFILE=Dockerfile
-    - COVERAGE_FILE=.coverage.tests nosetests
-    - coverage combine
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - behave -t ~@xfail --junit --junit-directory $CIRCLE_TEST_REPORTS/junit/
     - coveralls
 
 notify:

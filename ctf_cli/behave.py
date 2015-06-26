@@ -457,8 +457,8 @@ class BehaveRunner(object):
                 behave_tags = behave_tags.split('\n')
             for tag in behave_tags:
                 command.extend(['-t', '{0}'.format(tag)])
-                if verbose != "yes":
-                    command.append('--no-skipped')
+            if verbose != "yes":
+                command.append('--no-skipped')
 
         if ansible_conf:
             command.extend(['-D', 'ANSIBLE={0}'.format(ansible_conf)])
