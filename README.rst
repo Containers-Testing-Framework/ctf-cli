@@ -7,6 +7,9 @@ Containers Testing Framework CLI
 .. image:: https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master/landscape.svg?style=flat
    :target: https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master
 
+.. image:: https://coveralls.io/repos/Containers-Testing-Framework/ctf-cli/badge.svg?branch=master
+  :target: https://coveralls.io/r/Containers-Testing-Framework/ctf-cli?branch=master
+
 .. image:: https://badges.gitter.im/Join%20Chat.svg
    :target: https://gitter.im/Containers-Testing-Framework/ctf-cli
 
