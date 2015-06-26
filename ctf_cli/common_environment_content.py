@@ -34,7 +34,7 @@ def before_all(context):
         inventory = ansible.inventory.Inventory(ansible_cfg)
     except KeyError:
         raise Exception("-D ANSIBLE missing")
-    remote_dir = '/var/tmp/dkrfile'
+    remote_dir = '/tmp/'
 
     def open_file(path):
         context.temp_dir = tempfile.mkdtemp()
