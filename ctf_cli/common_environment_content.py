@@ -143,7 +143,7 @@ def after_scenario(context, scenario):
     try:
         cid = context.run('cat %s' % context.cid_file)
     except AssertionError as e:
-        logging.info("before_scenario: %s", e)
+        logging.info("after_scenario: %s", str(e))
         return
     if cid:
         context.run("docker logs %s" % cid)
