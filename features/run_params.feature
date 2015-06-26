@@ -6,6 +6,12 @@ Feature: Run parameters
      And I successfully run "ctf-cli init"
      And I successfully run "ctf-cli remote add steps https://github.com/Containers-Testing-Framework/common-steps.git"
      And I successfully run "ctf-cli remote add features https://github.com/Containers-Testing-Framework/common-features.git"
+     And I create a file named "tests/environment.py" with
+     """
+     from steps.common_steps.common_environment import docker_setup
+     def before_all(context):
+        docker_setup(context)
+     """
 
   Scenario: Verbose
     When I successfully run "ctf-cli -v run"

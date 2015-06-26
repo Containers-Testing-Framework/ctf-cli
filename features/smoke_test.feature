@@ -33,7 +33,13 @@ Scenario: Init, add remote, update and run
         Current branch master is up to date.
         INFO:	Updating remote test and features
         """
-    When I successfully run "ctf-cli run"
+    When I create a file named "tests/environment.py" with
+     """
+     from steps.common_steps.common_environment import docker_setup
+     def before_all(context):
+        docker_setup(context)
+     """
+     And I successfully run "ctf-cli run"
     Then the command output should contain:
         """
         INFO:	Running Containers Testing Framework cli
