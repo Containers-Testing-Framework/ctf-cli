@@ -46,8 +46,9 @@ def step_use_curdir_as_working_directory(context):
 
 # -----------------------------------------------------------------------------
 # STEPS: Create files with contents
-# -----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 @given(u'a file named "{filename}" with')
+@when(u'I create a file named "{filename}" with')
 def step_a_file_named_filename_with(context, filename):
     """
     Creates a textual file with the content provided as docstring.

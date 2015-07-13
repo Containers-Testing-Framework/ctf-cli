@@ -26,8 +26,6 @@ from six.moves.configparser import ConfigParser, NoSectionError, NoOptionError
 from ctf_cli.logger import logger
 from ctf_cli.exceptions import CTFCliError
 from ctf_cli.config import CTFCliConfig
-from ctf_cli.common_environment import common_environment_py_header
-from ctf_cli import __path__
 
 
 class BehaveTestsConfig(object):
@@ -122,7 +120,6 @@ class BehaveWorkingDirectory(object):
         :return:
         """
         self._check_working_dir()
-        self._setup_dir_structure()
 
         if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) == 'ansible':
             self._create_ansible_config()
@@ -133,8 +130,6 @@ class BehaveWorkingDirectory(object):
         if self._tests_conf:
             self._add_remote_features()
             self._add_remote_steps()
-        self._combine_steps()
-        self._write_environment_py()
 
     @staticmethod
     def find_tests_config(tests_path):
@@ -201,16 +196,6 @@ class BehaveWorkingDirectory(object):
         logger.debug("Creating working directory '%s'.", self._working_dir)
         os.mkdir(self._working_dir)
 
-    def _setup_dir_structure(self):
-        """
-        Create directory structure and create git repo where appropriate
-        :return:
-        """
-        logger.debug("Setting up Behave working directory")
-
-        for d in (self._features_dir, self._steps_dir):
-            os.mkdir(d)
-
     def _add_project_specific_steps(self):
         """
         Adds project specific steps from execution_dir/test/steps into the
@@ -222,9 +207,7 @@ class BehaveWorkingDirectory(object):
         if os.path.exists(project_steps_dir):
             logger.info("Using project specific Steps from '%s'",
                         project_steps_dir.replace(self._execution_dir + os.sep, ''))
-            shutil.copytree(project_steps_dir, os.path.join(self._steps_dir,
-                                                            '{0}_steps'.format(os.path.basename(
-                                                                self._execution_dir).replace('-', '_'))))
+            shutil.copytree(project_steps_dir, self._steps_dir)
 
         else:
             logger.warning("Not using project specific Steps. '%s' does not exist!", project_steps_dir)
@@ -240,9 +223,7 @@ class BehaveWorkingDirectory(object):
         if os.path.exists(project_features_dir):
             logger.info("Using project specific Features from '%s'",
                         project_features_dir.replace(self._execution_dir + os.sep, ''))
-            shutil.copytree(project_features_dir, os.path.join(self._features_dir,
-                                                               '{0}_features'.format(os.path.basename(
-                                                                   self._execution_dir).replace('-', '_'))))
+            shutil.copytree(project_features_dir, self._features_dir)
         else:
             logger.warning("Not using project specific Features. '%s' does not exist!", project_features_dir)
 
@@ -257,33 +238,9 @@ class BehaveWorkingDirectory(object):
         if os.path.exists(project_environment_py):
             logger.info("Using project specific environment.py from '%s'", project_environment_py.replace(
                 self._execution_dir + os.sep, ''))
-            shutil.copy(project_environment_py, os.path.join(self._working_dir,
-                                                             '{0}_environment.py'.format(os.path.basename(
-                                                                 self._execution_dir).replace('-', '_'))))
+            shutil.copy(project_environment_py, self._working_dir)
         else:
             logger.warning("Not using project specific environment.py. '%s' does not exist!", project_environment_py)
-
-    def _write_environment_py(self):
-        """
-        Writes common environment.py inside working_dir/. The file will import
-        the copied project specific environment file if present.
-
-        :return:
-        """
-        project_env_py = glob.glob(os.path.join(self._working_dir, '*environment.py'))
-        if project_env_py:
-            module_name = os.path.basename(project_env_py[0]).replace('.py', '').replace('-', '_')
-            import_statement = 'from {0} import *\n'.format(module_name)
-            import_statement += 'import {0}'.format(module_name)
-        else:
-            import_statement = ''
-
-        # create the environment.py
-        with open(os.path.join(self._working_dir, 'environment.py'), 'w') as f, \
-             open(os.path.join(__path__[0], 'common_environment_content.py'), 'r') as src:
-            logger.debug("Writing '%s'", os.path.join(self._working_dir, 'environment.py'))
-            f.write(common_environment_py_header.format(project_env_py_import=import_statement))
-            f.write(src.read())
 
     def _add_remote_steps(self):
         """
@@ -314,91 +271,6 @@ class BehaveWorkingDirectory(object):
                 check_call(['git', 'clone', '-q', remote_repo, local_dir])
             except CalledProcessError as e:
                 raise CTFCliError("Cloning of {0} failed!\n{1}".format(remote_repo, str(e)))
-
-    @staticmethod
-    def get_import_statements(path):
-        """
-        Generate import statements
-
-        :param path: path to dir from which to generate import statements
-        :return: list of strings containing import statement
-        """
-        imports = []
-
-        for (dirpath, _, filenames) in os.walk(path, followlinks=True):
-            module = dirpath.replace(path, '').strip(os.sep).replace(os.sep, '.')
-            # generate imports for the *.py files in the current dir
-
-            # skip hidden directories and their subdirs
-            dirs = [x for x in dirpath.replace(path, '').split(os.sep) if x.startswith('.')]
-            if dirs:
-                logger.debug("Skipping, since dirpath '%s' contains hidden dir: %s", dirpath, str(dirs))
-                continue
-
-            for f in filenames:
-                # skip NON Python files
-                if not f.endswith('.py'):
-                    continue
-                if f == '__init__.py':
-                    continue
-
-                logger.debug("Adding import for '%s'", os.path.join(dirpath, f))
-                imports.append('from {0}.{1} import *'.format(module, f.replace('.py', '')))
-        return imports
-
-    @staticmethod
-    def check_and_add_init_py(path, skip_root=False):
-        """
-        Checks if __init__.py is in all subdirs under the given path
-
-        :param path: root of the path where to begin
-        :param skip_root: Whether to skip the root directory
-        :return: list of paths for created __init__.py files
-        """
-        files = []
-
-        for (dirpath, _, filenames) in os.walk(path, followlinks=True):
-            if skip_root and dirpath == path:
-                continue
-
-            # skip hidden directories and their subdirs
-            dirs = [x for x in dirpath.replace(path, '').split(os.sep) if x.startswith('.')]
-            if dirs:
-                logger.debug("Skipping, since dirpath '%s' contains hidden dir: %s", dirpath, str(dirs))
-                continue
-
-            if '__init__.py' not in filenames:
-                new_file = os.path.join(dirpath, '__init__.py')
-                logger.debug("Creating __init__.py inside '%s'", dirpath)
-                files.append(new_file)
-                with open(new_file, 'w') as f:
-                    f.write('# -*- coding: utf-8 -*-\n# File generated by Containers Testing Framework\n')
-        return files
-
-    def _combine_steps(self):
-        """
-        Generate steps.py inside the working_dir/steps/ which imports everything from
-
-        :return:
-        """
-        steps_py_content = """# -*- coding: utf-8 -*-
-# This file is automatically generated by Containers Testing Framework
-# Any changes to this file will be discarded
-
-from behave import *
-""".splitlines()
-
-        imports = self.get_import_statements(self._steps_dir)
-        logger.debug("Using steps imports: %s", str(imports))
-        steps_py_content.extend(imports)
-
-        added_files = self.check_and_add_init_py(self._steps_dir)
-        logger.debug("Created __init__.py files: %s", str(added_files))
-
-        # create the steps.py
-        with open(os.path.join(self._steps_dir, 'steps.py'), 'w') as f:
-            logger.debug("Writing '%s'", os.path.join(self._steps_dir, 'steps.py'))
-            f.write('\n'.join(steps_py_content) + '\n')
 
 
 class BehaveRunner(object):
