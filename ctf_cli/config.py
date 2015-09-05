@@ -48,6 +48,7 @@ class CTFCliConfig(object):
     CONFIG_ANSIBLE_METHOD = 'Method'
     CONFIG_ANSIBLE_USER = 'User'
     CONFIG_ANSIBLE_SUDO = 'Sudo'
+    CONFIG_ANSIBLE_DYNAMIC_SCRIPT = 'Script'
 
     def __init__(self, cli_conf):
         self._config = ConfigParser()
