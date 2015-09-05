@@ -144,8 +144,10 @@ class Application(object):
 
     def remove_remote(self):
         name = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_NAME)
-        check_call('git submodule deinit -f %s' %name, shell=True)
-        check_call('git config -f .gitmodules --remove-section "submodule.%s"' %name, shell=True)
+        check_call('git submodule deinit -f %s' % name, shell=True)
+        check_call('git config -f .gitmodules --remove-section "submodule.%s"' % name, shell=True)
+        gitmodules_dir = os.path.join(os.path.abspath(".git/modules"), name)
+        shutil.rmtree(gitmodules_dir)
         shutil.rmtree(name)
 
     def run(self):
