@@ -156,6 +156,8 @@ class Application(object):
         """
         logger.info("Running Containers Testing Framework cli")
 
+        check_call("git submodule update --init", shell=True)
+
         # TODO: Remove this or rework, once more types are implemented
         if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) != 'ansible':
             raise CTFCliError("Wrong ExecType configured. Currently only 'ansible' is supported!")
