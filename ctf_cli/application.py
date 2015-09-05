@@ -176,4 +176,4 @@ class Application(object):
         """
         logger.info("Updating remote test and features")
 
-        check_call("git submodule foreach git pull --rebase", shell=True)
+        check_call("git submodule foreach git pull --rebase origin master", shell=True)
