@@ -141,10 +141,8 @@ class BehaveWorkingDirectory(object):
         """
         logger.debug("Looking for tests configuration inside '%s'", tests_path)
         f = glob.glob(os.path.join(tests_path, 'test*.ini'))
-        logger.debug(str(f))
         if not f:
             f = glob.glob(os.path.join(tests_path, 'test*.conf'))
-            logger.debug(str(f))
 
         if not f:
             logger.debug("Didn't find any tests configuration file!")
