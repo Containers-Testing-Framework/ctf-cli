@@ -159,29 +159,48 @@ class BehaveWorkingDirectory(object):
 
         :return: None
         """
+        script = None
+        method = None
+        host = None
+        user = None
+
         try:
-            method = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_METHOD)
-            host = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_HOST)
-            user = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_USER)
+            script = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_DYNAMIC_SCRIPT)
         except NoSectionError as e:
             raise CTFCliError("No configuration for 'ansible' provided!")
         except NoOptionError as e:
-            raise CTFCliError("Wrong ansible configuration: {0}".format(str(e)))
+            logger.debug("No dynamic provision script found")
+            script = None
 
-        # Optional parameters
-        try:
-            sudo = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_SUDO)
-        except NoOptionError as e:
-            sudo = False
+        if not script:
+            try:
+                method = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_METHOD)
+                host = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_HOST)
+                user = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_USER)
 
-        ansible_conf_path = os.path.join(self._working_dir, 'ansible.conf')
-        ansible_conf_content = "[ctf]\n{host} ansible_connection={method} ansible_ssh_user={user} ansible_sudo={sudo}\n".format(
-            host=host, method=method, user=user, sudo=sudo
-        )
+            except NoOptionError as e:
+                logger.debug("No dynamic provision script found")
 
-        logger.debug("Writing ansible configuration to '%s'\n%s", ansible_conf_path, ansible_conf_content)
-        with open(ansible_conf_path, 'w') as f:
-            f.write(ansible_conf_content)
+            # Optional parameters
+            try:
+                sudo = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_SUDO)
+            except NoOptionError as e:
+                sudo = False
+
+        ansible_conf_path = None
+        if script:
+            ansible_conf_path = os.path.join(self._working_dir, script)
+            shutil.copy(os.path.abspath(script), self._working_dir)
+            logger.debug("Using ansible dynamic configuration from '%s'", ansible_conf_path)
+        else:
+            ansible_conf_path = os.path.join(self._working_dir, 'ansible.conf')
+            ansible_conf_content = "[ctf]\n{host} ansible_connection={method} ansible_ssh_user={user} ansible_sudo={sudo}\n".format(
+                host=host, method=method, user=user, sudo=sudo
+            )
+
+            logger.debug("Writing ansible configuration to '%s'\n%s", ansible_conf_path, ansible_conf_content)
+            with open(ansible_conf_path, 'w') as f:
+                f.write(ansible_conf_content)
 
         self._exec_type_conf_path = ansible_conf_path
 
