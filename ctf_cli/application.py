@@ -144,8 +144,10 @@ class Application(object):
 
     def remove_remote(self):
         name = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_NAME)
-        check_call('git submodule deinit -f %s' %name, shell=True)
-        check_call('git config -f .gitmodules --remove-section "submodule.%s"' %name, shell=True)
+        check_call('git submodule deinit -f %s' % name, shell=True)
+        check_call('git config -f .gitmodules --remove-section "submodule.%s"' % name, shell=True)
+        gitmodules_dir = os.path.join(os.path.abspath(".git/modules"), name)
+        shutil.rmtree(gitmodules_dir)
         shutil.rmtree(name)
 
     def run(self):
@@ -153,6 +155,8 @@ class Application(object):
         The main application execution method
         """
         logger.info("Running Containers Testing Framework cli")
+
+        check_call("git submodule update --init", shell=True)
 
         # TODO: Remove this or rework, once more types are implemented
         if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) != 'ansible':
@@ -176,4 +180,4 @@ class Application(object):
         """
         logger.info("Updating remote test and features")
 
-        check_call("git submodule foreach git pull --rebase", shell=True)
+        check_call("git submodule foreach git pull --rebase origin master", shell=True)
