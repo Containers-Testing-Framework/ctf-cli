@@ -1,9 +1,6 @@
 Containers Testing Framework CLI
 ================================
 
-.. image:: https://circleci.com/gh/Containers-Testing-Framework/ctf-cli.svg?style=svg
-    :target: https://circleci.com/gh/goldmann/docker-scripts
-
 .. image:: https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master/landscape.svg?style=flat
    :target: https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master
 
