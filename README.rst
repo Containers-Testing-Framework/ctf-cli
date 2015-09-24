@@ -1,6 +1,9 @@
 Containers Testing Framework CLI
 ================================
 
+.. image:: https://travis-ci.org/Containers-Testing-Framework/ctf-cli.svg?branch=master
+    :target: https://travis-ci.org/Containers-Testing-Framework/ctf-cli
+
 .. image:: https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master/landscape.svg?style=flat
    :target: https://landscape.io/github/Containers-Testing-Framework/ctf-cli/master
 
