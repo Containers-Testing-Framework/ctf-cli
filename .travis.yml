@@ -1,0 +1,38 @@
+sudo: false
+
+language: python
+
+python:
+ - "2.7"
+
+env:
+ - TESTS="pyflakes"
+ - TESTS="pep8"
+ - TESTS="behave"
+
+matrix:
+  allow_failures:
+    - env: TESTS="pep8"
+
+before_install:
+ - pip install pep8 pyflakes behave PyHamcrest python-coveralls nose --upgrade
+ - python setup.py -q install
+ - git clean -fdx
+
+script:
+- case $TESTS in
+  pep8) pep8 ctf-cli.py ctf_cli/* --ignore=E501,E225,E265,E402 --show-source --show-pep8 ;;
+  pyflakes) pyflakes ctf-cli.py ctf_cli/* ;;
+  behave) behave -t ~@xfail ;;
+  esac
+
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/92b168ffacdc38a6facd
+    on_success: change
+    on_failure: always
+    on_start: never
+
+after_success:
+  coveralls

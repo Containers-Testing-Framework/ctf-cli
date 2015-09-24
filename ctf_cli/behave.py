@@ -121,7 +121,8 @@ class BehaveWorkingDirectory(object):
         """
         self._check_working_dir()
 
-        if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) == 'ansible':
+        if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME,
+                              CTFCliConfig.CONFIG_EXEC_TYPE) == 'ansible':
             self._create_ansible_config()
 
         self._add_project_specific_features()
@@ -163,26 +164,31 @@ class BehaveWorkingDirectory(object):
         user = None
 
         try:
-            script = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_DYNAMIC_SCRIPT)
-        except NoSectionError as e:
+            script = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME,
+                                        CTFCliConfig.CONFIG_ANSIBLE_DYNAMIC_SCRIPT)
+        except NoSectionError:
             raise CTFCliError("No configuration for 'ansible' provided!")
-        except NoOptionError as e:
+        except NoOptionError:
             logger.debug("No dynamic provision script found")
             script = None
 
         if not script:
             try:
-                method = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_METHOD)
-                host = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_HOST)
-                user = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_USER)
+                method = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME,
+                                            CTFCliConfig.CONFIG_ANSIBLE_METHOD)
+                host = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME,
+                                          CTFCliConfig.CONFIG_ANSIBLE_HOST)
+                user = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME,
+                                          CTFCliConfig.CONFIG_ANSIBLE_USER)
 
-            except NoOptionError as e:
+            except NoOptionError:
                 logger.debug("No dynamic provision script found")
 
             # Optional parameters
             try:
-                sudo = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_SUDO)
-            except NoOptionError as e:
+                sudo = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME,
+                                          CTFCliConfig.CONFIG_ANSIBLE_SUDO)
+            except NoOptionError:
                 sudo = False
 
         ansible_conf_path = None
@@ -196,7 +202,8 @@ class BehaveWorkingDirectory(object):
                 host=host, method=method, user=user, sudo=sudo
             )
 
-            logger.debug("Writing ansible configuration to '%s'\n%s", ansible_conf_path, ansible_conf_content)
+            logger.debug("Writing ansible configuration to '%s'\n%s",
+                         ansible_conf_path, ansible_conf_content)
             with open(ansible_conf_path, 'w') as f:
                 f.write(ansible_conf_content)
 
@@ -204,7 +211,9 @@ class BehaveWorkingDirectory(object):
 
     def _check_working_dir(self):
         """
-        Check if working directory exists. Remove it if it exists and then recreate. Create it if it does not exist
+        Check if working directory exists.
+        Remove it if it exists and then recreate.
+        Create it if it does not exist
         """
         if os.path.exists(self._working_dir):
             logger.debug("Working directory '%s' exists. Removing it!", self._working_dir)
@@ -227,7 +236,8 @@ class BehaveWorkingDirectory(object):
             shutil.copytree(project_steps_dir, self._steps_dir)
 
         else:
-            logger.warning("Not using project specific Steps. '%s' does not exist!", project_steps_dir)
+            logger.warning("Not using project specific Steps. '%s' does not exist!",
+                           project_steps_dir)
 
     def _add_project_specific_features(self):
         """
