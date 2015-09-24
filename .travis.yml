@@ -13,7 +13,6 @@ env:
 matrix:
   allow_failures:
     - env: TESTS="pep8"
-    - env: TESTS="pyflakes"
 
 before_install:
  - pip install pep8 pyflakes behave PyHamcrest python-coveralls nose --upgrade

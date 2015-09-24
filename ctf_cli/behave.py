@@ -164,9 +164,9 @@ class BehaveWorkingDirectory(object):
 
         try:
             script = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_DYNAMIC_SCRIPT)
-        except NoSectionError as e:
+        except NoSectionError:
             raise CTFCliError("No configuration for 'ansible' provided!")
-        except NoOptionError as e:
+        except NoOptionError:
             logger.debug("No dynamic provision script found")
             script = None
 
@@ -176,13 +176,13 @@ class BehaveWorkingDirectory(object):
                 host = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_HOST)
                 user = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_USER)
 
-            except NoOptionError as e:
+            except NoOptionError:
                 logger.debug("No dynamic provision script found")
 
             # Optional parameters
             try:
                 sudo = self._cli_conf.get(CTFCliConfig.ANSIBLE_SECTION_NAME, CTFCliConfig.CONFIG_ANSIBLE_SUDO)
-            except NoOptionError as e:
+            except NoOptionError:
                 sudo = False
 
         ansible_conf_path = None
