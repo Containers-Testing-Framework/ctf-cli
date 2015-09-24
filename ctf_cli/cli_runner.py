@@ -70,5 +70,6 @@ class CliRunner(object):
         finally:
             logger.debug('Exiting...')
 
+
 def run():
     CliRunner.run()

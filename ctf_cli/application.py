@@ -100,7 +100,7 @@ class Application(object):
             with open(steps_py_file, "w") as f:
                 f.write(common_steps_py_content)
             check_call("git add %s" % steps_py_file, shell=True)
-            
+
         # Copy sample configuration
         ctf_conf_file = os.path.join(self._execution_dir_path, "ctf.conf")
         if os.path.exists(ctf_conf_file):
@@ -113,13 +113,15 @@ class Application(object):
             check_call("git add %s" % ctf_conf_file, shell=True)
 
     def add_remote(self):
-        if 'feature' in self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_TYPE):
+        if 'feature' in self._cli_conf.get(
+                CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_TYPE):
             self.add_remote_feature()
         else:
             self.add_remote_step()
 
     def add_remote_feature(self):
-        project = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
+        project = self._cli_conf.get(
+            CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
         if project is None:
             path = "tests/features/"
         else:
@@ -127,7 +129,8 @@ class Application(object):
         self.add_submodule(path)
 
     def add_remote_step(self):
-        project = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
+        project = self._cli_conf.get(
+            CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
         if project is None:
             path = "tests/steps/"
         else:
@@ -159,7 +162,8 @@ class Application(object):
         check_call("git submodule update --init", shell=True)
 
         # TODO: Remove this or rework, once more types are implemented
-        if self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) != 'ansible':
+        if self._cli_conf.get(
+                CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) != 'ansible':
             raise CTFCliError("Wrong ExecType configured. Currently only 'ansible' is supported!")
 
         self._working_dir = BehaveWorkingDirectory(self._working_dir_path, self._cli_conf)

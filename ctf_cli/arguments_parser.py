@@ -24,7 +24,8 @@ class ArgumentsParser(object):
 
     def __init__(self, args=None):
         """ parse arguments """
-        self.parser = argparse.ArgumentParser(description='CLI for running Containers Testing Framework')
+        self.parser = argparse.ArgumentParser(
+            description='CLI for running Containers Testing Framework')
         self.subparsers = self.parser.add_subparsers(dest="cli_action")
         self.add_args()
         self.add_remote_subparser()
@@ -36,14 +37,12 @@ class ArgumentsParser(object):
     def add_remote_add_subparser(self, subparser):
         subparser.add_argument(
             dest='remote_type',
-            choices=['steps', 'features'],
-            )
+            choices=['steps', 'features'])
 
         subparser.add_argument(
             dest='url',
-            help='module url'
-            )
-        
+            help='module url')
+
         subparser.add_argument(
             "--project",
             dest='project',
@@ -51,24 +50,29 @@ class ArgumentsParser(object):
 
     def add_remote_remove_subparser(self, subparser):
         subparser.add_argument(
-            dest='name'
-            )
+            dest='name')
 
     def add_remote_subparser(self):
-        remote_subparser=self.subparsers.add_parser('remote', help='addidng/removing test suites')
-        remote_oper_subparser=remote_subparser.add_subparsers(dest='remote_action')
-        self.add_remote_add_subparser(remote_oper_subparser.add_parser('add', help='add remote repository'))
-        self.add_remote_remove_subparser(remote_oper_subparser.add_parser('remove', help='remove remote repository'))
+        remote_subparser = self.subparsers.add_parser(
+            'remote', help='addidng/removing test suites')
+        remote_oper_subparser = remote_subparser.add_subparsers(
+            dest='remote_action')
+        self.add_remote_add_subparser(remote_oper_subparser.add_parser(
+            'add', help='add remote repository'))
+        self.add_remote_remove_subparser(remote_oper_subparser.add_parser(
+            'remove', help='remove remote repository'))
         remote_oper_subparser.add_parser('list', help='list remote repositories')
 
     def add_run_subparser(self):
-        run_subparser=self.subparsers.add_parser('run', help="run test suite - default")
+        run_subparser = self.subparsers.add_parser(
+            'run', help="run test suite - default")
         run_subparser.add_argument(
             "-c",
             "--cli-config",
             default=None,
             dest='cli_config_path',
-            help="Path to CLI configuration file (By default use only CLI arguments and default values)"
+            help="Path to CLI configuration file" +
+                 "(By default use only CLI arguments and default values)"
         )
         run_subparser.add_argument(
             "-t",
@@ -115,7 +119,6 @@ class ArgumentsParser(object):
             action="store_true",
             help="Output is more verbose (recommended)"
         )
-
 
     def __getattr__(self, name):
         try:
