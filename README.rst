@@ -1,6 +1,9 @@
 Containers Testing Framework CLI
 ================================
 
+.. image:: https://badge.fury.io/py/ctf-cli.svg
+    :target: https://badge.fury.io/py/ctf-cli.svg
+
 .. image:: https://travis-ci.org/Containers-Testing-Framework/ctf-cli.svg?branch=master
     :target: https://travis-ci.org/Containers-Testing-Framework/ctf-cli
 
