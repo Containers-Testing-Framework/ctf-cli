@@ -4,8 +4,12 @@ from setuptools import setup, find_packages
 from ctf_cli import version
 import codecs
 
-with open('requirements.txt') as f:
-    requirements = f.read().splitlines()
+requirements = []
+try:
+    with open('requirements.txt') as f:
+        requirements = f.read().splitlines()
+except:
+    pass
 
 setup(
     name = "ctf-cli",
