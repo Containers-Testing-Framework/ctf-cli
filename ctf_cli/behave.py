@@ -90,12 +90,14 @@ class BehaveWorkingDirectory(object):
         self._features_dir = os.path.join(self._working_dir, 'features')
         self._steps_dir = os.path.join(self._working_dir, 'steps')
 
-        tests_conf_path = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME,
-                                             CTFCliConfig.CONFIG_TESTS_CONFIG_PATH)
-        if tests_conf_path is None:
-            self._tests_conf_path = self.find_tests_config(self._project_tests_dir)
-        else:
+        self._tests_conf_path = self.find_tests_config(self._project_tests_dir)
+        try:
+            tests_conf_path = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME,
+                                                 CTFCliConfig.CONFIG_TESTS_CONFIG_PATH)
+            assert tests_conf_path
             self._tests_conf_path = tests_conf_path
+        except Exception:
+            pass
 
         if self._tests_conf_path is not None:
             # keep the cli_conf object Up-To-Date
@@ -321,17 +323,37 @@ class BehaveRunner(object):
         Run Behave and pass some runtime arguments
         :return:
         """
+        behave_data = None
+        try:
+            behave_data = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_BEHAVE_DATA)
+        except Exception:
+            pass
 
-        behave_data = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_BEHAVE_DATA)
-        behave_tags = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_BEHAVE_TAGS)
-        junit = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_JUNIT)
-        verbose = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_VERBOSE)
+        behave_tags = None
+        try:
+            behave_tags = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_BEHAVE_TAGS)
+        except Exception:
+            pass
+
+        junit = None
+        try:
+            junit = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_JUNIT)
+        except Exception:
+            pass
+
+        verbose = None
+        try:
+            verbose = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_VERBOSE)
+        except Exception:
+            pass
 
         # configuration file for ansible
-        if self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) == 'ansible':
-            ansible_conf = self._working_dir_obj.exec_type_conf_path()
-        else:
-            ansible_conf = None
+        ansible_conf = None
+        try:
+            if self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_EXEC_TYPE) == 'ansible':
+                ansible_conf = self._working_dir_obj.exec_type_conf_path()
+        except Exception:
+            pass
 
         command = [
             'behave'
