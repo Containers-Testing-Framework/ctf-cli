@@ -16,7 +16,7 @@ matrix:
     - env: TESTS="pep8"
 
 before_install:
- - pip install pep8 pyflakes behave PyHamcrest python-coveralls nose --upgrade
+ - pip install pep8 pyflakes importlib behave PyHamcrest python-coveralls nose --upgrade
  - python setup.py -q install
  - git clean -fdx
 
