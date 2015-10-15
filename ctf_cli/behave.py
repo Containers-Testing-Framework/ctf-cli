@@ -90,12 +90,14 @@ class BehaveWorkingDirectory(object):
         self._features_dir = os.path.join(self._working_dir, 'features')
         self._steps_dir = os.path.join(self._working_dir, 'steps')
 
-        tests_conf_path = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME,
-                                             CTFCliConfig.CONFIG_TESTS_CONFIG_PATH)
-        if tests_conf_path is None:
-            self._tests_conf_path = self.find_tests_config(self._project_tests_dir)
-        else:
+        self._tests_conf_path = self.find_tests_config(self._project_tests_dir)
+        try:
+            tests_conf_path = self._cli_conf.get(CTFCliConfig.GLOBAL_SECTION_NAME,
+                                                 CTFCliConfig.CONFIG_TESTS_CONFIG_PATH)
+            assert tests_conf_path
             self._tests_conf_path = tests_conf_path
+        except Exception:
+            pass
 
         if self._tests_conf_path is not None:
             # keep the cli_conf object Up-To-Date
