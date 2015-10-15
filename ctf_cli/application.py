@@ -120,21 +120,25 @@ class Application(object):
             self.add_remote_step()
 
     def add_remote_feature(self):
-        project = self._cli_conf.get(
-            CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
-        if project is None:
-            path = "tests/features/"
-        else:
+        path = "tests/features/"
+        try:
+            project = self._cli_conf.get(
+                CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
+            assert project
             path = "tests/features/" + project
+        except Exception:
+            pass
         self.add_submodule(path)
 
     def add_remote_step(self):
-        project = self._cli_conf.get(
-            CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
-        if project is None:
-            path = "tests/steps/"
-        else:
+        path = "tests/steps/"
+        try:
+            project = self._cli_conf.get(
+                CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_REMOTE_PROJECT)
+            assert project
             path = "tests/steps/" + project
+        except Exception:
+            pass
         self.add_submodule(path)
 
     def list_remotes(self):
