@@ -163,7 +163,10 @@ class Application(object):
         """
         logger.info("Running Containers Testing Framework cli")
 
-        check_call("git submodule update --init", shell=True)
+        try:
+            check_call("git submodule update --init", shell=True)
+        except:
+            pass
 
         # TODO: Remove this or rework, once more types are implemented
         if self._cli_conf.get(
