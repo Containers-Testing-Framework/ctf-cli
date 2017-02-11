@@ -3,7 +3,7 @@ Feature: Initialize a new repo
   @xfail
   Scenario: Directory is not under git control
     Given a new working directory
-    When I run "ctf-cli init"
+    When I run "ctf init"
     Then it should pass with:
         """
         INFO:	Initialize default directory structure
@@ -19,7 +19,7 @@ Feature: Initialize a new repo
   Scenario: Directory is under git control
     Given a new working directory
     When I run "git init"
-     And I run "ctf-cli init"
+     And I run "ctf init"
     Then it should pass with:
         """
         INFO:	Initialize default directory structure
@@ -35,7 +35,7 @@ Feature: Initialize a new repo
     Given a new working directory
       And a directory named "tests"
     When I run "git init"
-     And I run "ctf-cli init"
+     And I run "ctf init"
     Then it should pass with:
         """
         INFO:	Initialize default directory structure
@@ -52,7 +52,7 @@ Feature: Initialize a new repo
       And a directory named "tests"
       And a directory named "tests/features"
     When I run "git init"
-     And I run "ctf-cli init"
+     And I run "ctf init"
     Then it should pass with:
         """
         INFO:	Initialize default directory structure
@@ -69,7 +69,7 @@ Feature: Initialize a new repo
       And a directory named "tests"
       And a directory named "tests/steps"
     When I run "git init"
-     And I run "ctf-cli init"
+     And I run "ctf init"
     Then it should pass with:
         """
         INFO:	Initialize default directory structure
@@ -87,7 +87,7 @@ Feature: Initialize a new repo
       And a directory named "tests/steps"
       And an empty file named "tests/steps/__init__.py"
     When I run "git init"
-     And I run "ctf-cli init"
+     And I run "ctf init"
     Then it should pass with:
         """
         INFO:	Initialize default directory structure
@@ -106,7 +106,7 @@ Feature: Initialize a new repo
       And an empty file named "tests/steps/__init__.py"
       And an empty file named "tests/steps/steps.py"
     When I run "git init"
-     And I run "ctf-cli init"
+     And I run "ctf init"
     Then it should pass with:
         """
         INFO:	Initialize default directory structure
@@ -122,7 +122,7 @@ Feature: Initialize a new repo
     Given a new working directory
       And an empty file named "ctf.conf"
     When I run "git init"
-     And I run "ctf-cli init"
+     And I run "ctf init"
     Then it should pass with:
         """
         INFO:	Initialize default directory structure
@@ -132,4 +132,20 @@ Feature: Initialize a new repo
         INFO:	Creating tests/steps/__init__.py file
         INFO:	Creating tests/steps/steps.py file
         INFO:	File ctf.conf already exists
+        """
+
+  @xfail
+  Scenario: ctf-cli is an alias
+    Given a new working directory
+    When I run "git init"
+     And I run "ctf-cli init"
+    Then it should pass with:
+        """
+        INFO: Initialize default directory structure
+        INFO: Creating tests directory
+        INFO: Creating tests/features directory
+        INFO: Creating tests/steps directory
+        INFO: Creating tests/steps/__init__.py file
+        INFO: Creating tests/steps/steps.py file
+        INFO: Creating ctf.conf file
         """
