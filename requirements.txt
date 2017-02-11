@@ -1,4 +1,4 @@
-ansible<2.0
+ansible
 behave>=1.2.5
 markupsafe
 six>=1.9.0
