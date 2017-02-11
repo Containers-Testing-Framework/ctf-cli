@@ -24,7 +24,9 @@ setup(
     keywords = 'docker behave',
     long_description = codecs.open('README.rst', encoding="utf8").read(),
     entry_points = {
-        'console_scripts': ['ctf-cli=ctf_cli.cli_runner:run'],
+        'console_scripts': [
+            'ctf-cli=ctf_cli.cli_runner:run',
+            'ctf=ctf_cli.cli_runner:run'],
     },
     install_requires=requirements
 )

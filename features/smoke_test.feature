@@ -3,7 +3,7 @@ Feature: Smoke test
 Scenario: Init, add remote, update and run
     Given a new working directory
     When I run "git init"
-     And I run "ctf-cli init"
+     And I run "ctf init"
     Then it should pass with:
         """
         INFO:	Initialize default directory structure
@@ -14,17 +14,17 @@ Scenario: Init, add remote, update and run
         INFO:	Creating tests/steps/steps.py file
         INFO:	Creating ctf.conf file
         """
-    When I run "ctf-cli remote add steps https://github.com/Containers-Testing-Framework/common-steps.git"
+    When I run "ctf remote add steps https://github.com/Containers-Testing-Framework/common-steps.git"
     Then it should pass with:
         """
         Cloning into 'tests/steps/common_steps'...
         """
-    When I run "ctf-cli remote add features https://github.com/Containers-Testing-Framework/common-features.git"
+    When I run "ctf remote add features https://github.com/Containers-Testing-Framework/common-features.git"
     Then it should pass with:
         """
         Cloning into 'tests/features/common_features'...
         """
-    When I run "ctf-cli update"
+    When I run "ctf update"
     Then it should pass with:
         """
         Entering 'tests/features/common_features'
@@ -39,7 +39,7 @@ Scenario: Init, add remote, update and run
      def before_all(context):
         docker_setup(context)
      """
-     And I successfully run "ctf-cli run"
+     And I successfully run "ctf run"
     Then the command output should contain:
         """
         INFO:	Running Containers Testing Framework cli
