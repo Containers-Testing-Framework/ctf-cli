@@ -341,6 +341,12 @@ class BehaveRunner(object):
         except Exception:
             pass
 
+        behave_opts = None
+        try:
+            behave_opts = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_BEHAVE_OPTS)
+        except Exception:
+            pass
+
         verbose = None
         try:
             verbose = self._cli_conf_obj.get(CTFCliConfig.GLOBAL_SECTION_NAME, CTFCliConfig.CONFIG_VERBOSE)
@@ -380,6 +386,11 @@ class BehaveRunner(object):
                 command.extend(['-t', '{0}'.format(tag)])
             if verbose != "yes":
                 command.append('--no-skipped')
+
+        if behave_opts:
+            if type(behave_opts) is str:
+                behave_opts = behave_opts.split()
+            command.extend(behave_opts)
 
         if ansible_conf:
             command.extend(['-D', 'ANSIBLE={0}'.format(ansible_conf)])
