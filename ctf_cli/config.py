@@ -36,6 +36,7 @@ class CTFCliConfig(object):
     CONFIG_TESTS_CONFIG_PATH = 'TestsConfigPath'
     CONFIG_BEHAVE_DATA = 'BehaveData'
     CONFIG_BEHAVE_TAGS = 'BehaveTags'
+    CONFIG_BEHAVE_OPTS = 'BehaveOpts'
     CONFIG_JUNIT = 'Junit'
     CONFIG_EXEC_TYPE = 'ExecType'
     CONFIG_REMOTE_TYPE = 'remote_type'
@@ -101,6 +102,7 @@ class CTFCliConfig(object):
                 cli_conf.tests_config_path)if cli_conf.tests_config_path else None,
             self.CONFIG_BEHAVE_DATA: cli_conf.behave_data,
             self.CONFIG_BEHAVE_TAGS: cli_conf.behave_tags,
+            self.CONFIG_BEHAVE_OPTS: cli_conf.behave_opts,
             self.CONFIG_JUNIT: cli_conf.junit,
             self.CONFIG_EXEC_TYPE: 'ansible',
             self.CONFIG_REMOTE_TYPE: cli_conf.remote_type,

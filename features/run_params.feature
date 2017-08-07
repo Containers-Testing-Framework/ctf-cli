@@ -49,6 +49,36 @@ Feature: Run parameters
         INFO:	Running behave inside working directory 'behave -v -t tag1 -t ~tag2 -D
         """
 
+  Scenario: Behave opts
+   Given a directory named "tests/features"
+     And a file named "tests/features/foo.feature" with:
+     """
+     Feature: test feature
+
+     Scenario: First scenario
+
+     Scenario: Second scenario
+
+     Scenario: Third scenario
+     """ 
+    When I successfully run "ctf run --behave-opts 'tests/features/foo.feature:5'"
+    Then the command output should contain:
+        """
+        INFO:   Running behave inside working directory 'behave tests/features/foo.feature:5'
+        """
+     And the command output should contain:
+        """
+        Scenario: Second scenario        
+        """
+     And the command output should not contain:
+        """
+        Scenario: First scenario
+        """
+     And the command output should not contain:
+        """
+        Scenario: Third scenario
+        """
+
   Scenario: Run with existing work directory
     Given a directory named "workdir"
      When I successfully run "ctf -v run"

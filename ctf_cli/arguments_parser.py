@@ -104,6 +104,14 @@ class ArgumentsParser(object):
             dest='junit',
             help="Junit folder to store results. If not passed junit reports will not be generated"
         )
+        run_subparser.add_argument(
+            "-o",
+            "--behave-opts",
+            action='append',
+            default=None,
+            dest='behave_opts',
+            help="Pass other arguments to behave"
+        )
 
     def add_update_subparser(self):
         self.subparsers.add_parser('update', help="update suites")
